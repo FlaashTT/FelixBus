@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<form action="f03_ex01.php" method=”GET”>
+
+Nome: <input name="name" value=""/><br>
+Idade: <input name="idade" value=""/><br>
+<input type="submit" value="continuar"/>
+
+</form>
+    
+</body>
+</html>
