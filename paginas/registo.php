@@ -17,7 +17,7 @@ if ($_POST["email"] != "" && $_POST["password"] != "" && $_POST["username"] != "
     //fazer o insert na db
     //verificar se registou
 
-    $sql = "INSERT INTO user(idUtilizador,nome,password,email)  VALUES ('$num_users','$username', '$password', '$email')";
+    $sql = "INSERT INTO user(nome,password,email)  VALUES ('$username', '$password', '$email')";
     $result = mysqli_query($conn, $sql);
 
     if (mysqli_query($conn, $sql)) {
