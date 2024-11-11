@@ -21,7 +21,7 @@ if ($_POST["email"] != "" && $_POST["password"] != "") {
         // Verifica se a atualização foi bem-sucedida
         if ($update_result) {
             // Redireciona para a página de início
-            header(" url=inicio.php" );
+            header("Location: inicio.php");
             exit(); 
         } else {
             echo "Erro ao atualizar o estado do usuário!";
@@ -29,6 +29,7 @@ if ($_POST["email"] != "" && $_POST["password"] != "") {
     } else {
         // Caso insira algum dado incorreto, exibe uma mensagem de erro
         echo "Email ou senha incorretos!";
+        header("Refresh: 2; url=login.html");
     }
 } else {
     // Caso os campos de email ou senha estejam vazios
