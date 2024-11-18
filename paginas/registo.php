@@ -1,5 +1,6 @@
 <?php
 include("../basedados/basedados.h");
+session_start();
 
 // Verifica se o formulário foi enviado com os campos 'email' e 'password'
 if ($_POST["email"] != "" && $_POST["password"] != "" && $_POST["username"] != "") {

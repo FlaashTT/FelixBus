@@ -1,4 +1,6 @@
 <?php
+
+session_start();
 $opcao = $_GET["addSaldo"];
 
 switch ($opcao) {

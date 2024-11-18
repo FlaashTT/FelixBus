@@ -14,6 +14,7 @@
 <?php
 
 include("../basedados/basedados.h");
+session_start();
 date_default_timezone_set('Europe/Lisbon');
 
 echo "Bem-vindo!<br>";
