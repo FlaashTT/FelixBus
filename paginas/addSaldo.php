@@ -1,28 +1,32 @@
 <?php
 
 session_start();
-$opcao = $_GET["addSaldo"];
+
+
+if (isset($_GET["addSaldo"])) {
+    $opcao = $_GET["addSaldo"];
+}else{
+    $opcao = 0;
+}
+ 
+
 
 switch ($opcao) {
     case 0:
-        echo "O ",$eleitor," votou em branco <br>";
+        echo "Tem de adicionar uma quantidade que deseja adicionar";
+        header("Refresh: 2; url=addSaldo.html");
     break;
     case 1:
-        echo "O ",$eleitor," ,votou em <br>";
-        
-        for($i=0;$i<=$NumOpcoes;$i++){
-            $selected = $opcao[$i];
-        }
-        
+        echo "1"; 
     break;
     case 2:
-        echo "O ",$eleitor," votou em branco <br>";
+        echo "2";
     break;
     case 3:
-        echo "O ",$eleitor," tem o seu voto anulado <br>";
+        echo "3";
     break;
     case 4:
-        echo "O ",$eleitor,", tem seu voto seus voto anulado! <br>";
+        echo "4";
     break;
-    }
+}
 ?>
