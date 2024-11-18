@@ -1,16 +1,12 @@
 <html>
 
 <body>
-
-
     <a href="logout.php"><input type="submit" value="logout" /></a>
 
     <label for="pesquisa">Pesquisa:</label><br>
     <input type="text" name="pesquisa">
     <input type="submit" value="pesquisar" /><br>
     <br>
-
-
 </body>
 
 </html>
