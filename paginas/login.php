@@ -15,6 +15,7 @@ if ($_POST["email"] != "" && $_POST["password"] != "") {
     // Verifica se a consulta retornou algum resultado
     if (mysqli_num_rows($result) > 0) {
         // Atualiza o estado do usuário para 'online'
+
         $update_sql = "UPDATE user SET estado = 'online' WHERE email = '$email'";
         $update_result = mysqli_query($conn, $update_sql);
 
@@ -34,6 +35,7 @@ if ($_POST["email"] != "" && $_POST["password"] != "") {
 } else {
     // Caso os campos de email ou senha estejam vazios
     echo "Preencha todos os campos!";
+    header("Refresh: 2; url=login.html");
 }
 
 // Fecha a conexão com o banco de dados
