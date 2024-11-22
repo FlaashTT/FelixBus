@@ -5,16 +5,21 @@
     <p>Selecione a quantidade que deseja adicionar</p>
     <form action="addSaldo.php"  method=”GET”> 
         <label for="">
-            <input type="checkbox" name="addSaldo[]" id="">5 &euro;<br>
-            <input type="checkbox" name="addSaldo[]" id="">10 &euro;<br>
-            <input type="checkbox" name="addSaldo[]" id="">20 &euro;<br>
+            <input type="checkbox" name="addSaldo[]" value="5">5 &euro;<br>
+            <input type="checkbox" name="addSaldo[]" value="10">10 &euro;<br>
+            <input type="checkbox" name="addSaldo[]" value="20">20 &euro;<br>
         </label>
        
-        <input type="checkbox" name="addSaldo[]" id="">
+        <input type="checkbox" name="addSaldo[]" value="OutraOp">
         <label for="OutraOp">Adicionar outra op&ccedil;&atilde;o:</label><br>
-        <input type="number" name="OutraOp" >
+        <input type="number" name="valorOutraOpcao" >
         <br>
         <button type='submit' name='funcionario'>adicionar saldo!</button><br>
+        
     </form>
+    <form action="inicio.php">
+        <button type='submit' name='voltarInicio'>Voltar atras</button><br>
+    </form>
+    
 </body>
 </html>
