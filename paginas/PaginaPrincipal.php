@@ -46,6 +46,7 @@ if (mysqli_num_rows($result) > 0) {
         echo "Nome: " . $row['nome'] . "<br>";
         echo "Email: " . $row['email'] . "<br>";
         echo "Estado: " . $row['estado'] . "<br><br>";
+        echo "<button type='submit' name='defeniçoes'>defenições </button><br>";
     }
 } else {
     // Se não houver usuários online

@@ -1,4 +1,7 @@
 <?php
+
+//criptografar passes
+//destruir sessoes
 include("../basedados/basedados.h");  
 session_start();
 
@@ -15,18 +18,20 @@ if ($_POST["email"] != "" && $_POST["password"] != "") {
 
     // Verifica se a consulta retornou algum resultado
     if (mysqli_num_rows($result) > 0) {
-        // Atualiza o estado do usuário para 'online'
+        $user = mysqli_fetch_assoc($result);
 
-        $update_sql = "UPDATE user SET estado = 'online' WHERE email = '$email'";
-        $update_result = mysqli_query($conn, $update_sql);
+        if ($user['status'] === 'aprovado') {
+            $update_sql = "UPDATE user SET estado = 'online' WHERE email = '$email'";
+            $update_result = mysqli_query($conn, $update_sql); //Atualiza o estado
+            header("Refresh: 1; url=PaginaPrincipal.php");
 
-        // Verifica se a atualização foi bem-sucedida
-        if ($update_result) {
-            // Redireciona para a página de início
-            header("Location: inicio.php");
-            exit(); 
-        } else {
-            echo "Erro ao atualizar o estado do usuário!";
+        } elseif ($user['status'] === 'pendente') {
+            echo "Seu acesso ainda não foi aprovado pelo administrador.";
+            header("Refresh: 3; url=login.html");
+
+        } elseif ($user['status'] === 'rejeitado') {
+            echo "Seu pedido foi rejeitado pelo administrador. Entre em contato.";
+            header("Refresh: 3; url=login.html");
         }
     } else {
         // Caso insira algum dado incorreto, exibe uma mensagem de erro
