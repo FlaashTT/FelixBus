@@ -11,7 +11,7 @@ $update_result = mysqli_query($conn, $update_sql);
 if ($update_result) {
     // Redireciona para a página de início apos realizar logout
     session_destroy();
-    header("Location: login.html") ;
+    header("Location: login.php") ;
     exit();
 } else {
     echo "Erro ao atualizar o estado do usuário!";
