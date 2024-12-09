@@ -225,7 +225,8 @@
                     ";
                     echo ("<h1>Lista Administradores</h1>");
                     echo "<hr>";
-                    $sql = "SELECT * FROM users WHERE TipoUser = '3'";
+                    
+                    $sql = "SELECT * FROM users ";
                     $result = mysqli_query($conn, $sql);
 
                     if ($result && mysqli_num_rows($result) > 0) {
@@ -233,6 +234,7 @@
                                 <tr>
                                     <th>Nome</th>
                                     <th>Email</th>
+                                    <th>Tipo Utilizador</th>
                                     <th>Validação</th>
                                     <th>Saldo</th>
                                     <th>Editar</th>
@@ -241,96 +243,40 @@
                                     <th>Eliminar</th>
                                     
                                 </tr>";
-
                         while ($mostrar = mysqli_fetch_assoc($result)) {
+                            if($mostrar['TipoUser'] === "3"){
+                                $tipo = "Administrador";
+                            }else if($mostrar['TipoUser'] === "2"){
+                                $tipo = "Funcionario";
+                            }else if($mostrar['TipoUser'] === "1"){
+                                $tipo = "Cliente";
+                            } else {echo "OOPS!!...";}
+                            
                             echo "
-                            <tr>
-                                <td>" . $mostrar['Nome'] . "</td>
-                                <td>" . $mostrar['Email'] . "</td>
-                                <td>" . $mostrar['Autenticacao'] . "</td>
-                                <td>".$mostrar['Saldo']."</td>
-                                <td> <button type='submit' name='alterarConta' value='" . $mostrar['Email'] . "'>Alterar </button><br></td>
-                                <td><button type='submit' name='adicionarSaldo' value='" . $mostrar['Email'] . "'>Adicionar </button><br></td>
-                                <td><button type='submit' name='alterarTipo' value='" . $mostrar['Email'] . "'>Alterar Tipo</button><br></td>
-                                <td><button type='submit' name='eliminarConta' value='" . $mostrar['Email'] . "'>Eliminar</button><br></td>
-                            </tr>";
+                                <form method='POST' action='../paginas/acoes.php'>
+                                    <tr>
+                                        <td>" . $mostrar['Nome'] . "</td>
+                                        <td>" . $mostrar['Email'] . "</td>
+                                        <td>" . $tipo . "</td>
+                                        <td>" . $mostrar['Autenticacao'] . "</td>
+                                        <td>" . $mostrar['Saldo'] . "</td>
+                                        <td><button type='submit' name='alterarConta' value='" . $mostrar['Email'] . "'>Alterar</button></td>
+                                        <td>
+                                            <button type='submit' name='adicionarSaldo' value='" . $mostrar['Email'] . "'>Adicionar</button>
+                                        </td>
+                                        <td>
+                                            <button type='submit' name='alterarTipo' value='" . $mostrar['Email'] . "'>Alterar Tipo</button>
+                                        </td>
+                                        <td>
+                                            <button type='submit' name='EliminarConta' value='" . $mostrar['Email'] . "'>Eliminar</button>
+                                        </td>
+                                    </tr>
+                                </form>";
+
                         }
                         echo "</table>";
                     } else {
-                        echo "Sem Administradores !";
-                    }
-
-
-                    echo ("<h1>Lista Funcionarios</h1>");
-                    echo "<hr>";
-                    $sql = "SELECT * FROM users WHERE TipoUser = '2'";
-                    $result = mysqli_query($conn, $sql);
-
-                    if ($result && mysqli_num_rows($result) > 0) {
-                        echo "<table>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Validação</th>
-                            <th>Saldo</th>
-                            <th>Editar</th>
-                            <th>Adicionar saldo</th>
-                            <th>Alterar tipo Utilizador</th>
-                            <th>Eliminar</th>
-                        </tr>";
-
-                        while ($mostrar = mysqli_fetch_assoc($result)) {
-                            echo "
-                            <tr>
-                                <td>" . $mostrar['Nome'] . "</td>
-                                <td>" . $mostrar['Email'] . "</td>
-                                <td>" . $mostrar['Autenticacao'] . "</td>
-                                <td>".$mostrar['Saldo']."</td>
-                                <td> <button type='submit' name='alterarConta' value='" . $mostrar['Email'] . "'>Alterar </button><br></td>
-                                <td><button type='submit' name='adicionarSaldo' value='" . $mostrar['Email'] . "'>Adicionar </button><br></td>
-                                <td><button type='submit' name='alterarTipo' value='" . $mostrar['Email'] . "'>Alterar Tipo</button><br></td>
-                                <td><button type='submit' name='eliminarConta' value='" . $mostrar['Email'] . "'>Eliminar</button><br></td>
-                            </tr>";
-                        }
-                        echo "</table>";
-                    } else {
-                        echo "Sem Funcionarios !";
-                    }
-
-                    echo ("<h1>Lista Clientes</h1>");
-                    echo "<hr>";
-                    $sql = "SELECT * FROM users WHERE TipoUser = '1'";
-                    $result = mysqli_query($conn, $sql);
-
-                    if ($result && mysqli_num_rows($result) > 0) {
-                        echo "<table>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Validação</th>
-                            <th>Saldo</th>
-                            <th>Editar</th>
-                            <th>Adicionar saldo</th>
-                            <th>Alterar tipo Utilizador</th>
-                            <th>Eliminar</th>
-                        </tr>";
-
-                        while ($mostrar = mysqli_fetch_assoc($result)) {
-                            echo "
-                            <tr>
-                                <td>" . $mostrar['Nome'] . "</td>
-                                <td>" . $mostrar['Email'] . "</td>
-                                <td>" . $mostrar['Autenticacao'] . "</td>
-                                <td>".$mostrar['Saldo']."</td>
-                                <td> <button type='submit' name='alterarConta' value='" . $mostrar['Email'] . "'>Alterar </button><br></td>
-                                <td><button type='submit' name='adicionarSaldo' value='" . $mostrar['Email'] . "'>Adicionar</button><br></td>
-                                <td><button type='submit' name='alterarTipo' value='" . $mostrar['Email'] . "'>Alterar Tipo</button><br></td>
-                                <td><button type='submit' name='eliminarConta' value='" . $mostrar['Email'] . "'>Eliminar</button><br></td>
-                            </tr>";
-                        }
-                        echo "</table>";
-                    } else {
-                        echo "Sem Clientes !";
+                        echo "Sem Utilizadores !";
                     }
                 } else {
                     echo "<p>Você não tem permissão para acessar esta página.</p>";
@@ -396,21 +342,12 @@
             }
         }
 
-        if (isset($_POST['eliminarConta'])) {
-            $EliminarEmail = $_POST['eliminarConta'];
 
 
+        
 
-            // Atualiza o campo 'Autenticacao' para 'Aceite' na base de dados
-            $sql = "DELETE From users  WHERE Email = '$EliminarEmail'";
-
-            if (mysqli_query($conn, $sql)) {
-                echo "<p>Utilizador aceito com sucesso! </p>";
-                echo "<meta http-equiv='refresh' content='1;url=?page=gerenciar-utilizadores'>";
-            } else {
-                echo "Erro ao aceitar o usuário: " . mysqli_error($conn);
-            }
-        }
+        
+        
         ?>
     </div>
 </body>
