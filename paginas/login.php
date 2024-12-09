@@ -1,127 +1,124 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
   <style>
-    /* Bordered form */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+
+    /* Centralizar o formulário */
     form {
       border: 3px solid #f1f1f1;
-      margin-left: 800px;
-      margin-right: 800px;
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
-    h2{
-        margin-left: 800px;
-        margin-right: 800px;
-        align-items: center;
-        justify-content: center;
-        display: flex;
-        margin-top: 300px;
+    h2 {
+      text-align: center;
+      margin-top: 50px;
     }
 
-    a{
-        margin-left: 10px;
-        margin-right: 10px;
-        align-items: center;
-        justify-content: center;
-        display: flex;
-    }
-
-    /* Full-width inputs */
+    /* Estilo dos inputs */
     input[type="text"],
     input[type="password"] {
       width: 100%;
-      padding: 12px 20px;
+      padding: 12px;
       margin: 8px 0;
-      display: inline-block;
       border: 1px solid #ccc;
+      border-radius: 4px;
       box-sizing: border-box;
     }
 
-    /* Set a style for all buttons */
     button {
       background-color: #04aa6d;
       color: white;
-      padding: 14px 20px;
-      margin: 8px 0;
+      padding: 14px;
       border: none;
       cursor: pointer;
       width: 100%;
+      border-radius: 4px;
     }
 
-    /* Add a hover effect for buttons */
     button:hover {
-      opacity: 0.8;
+      background-color: #037f53;
+    }
+
+    a {
+      display: block;
+      text-align: center;
+      margin-top: 10px;
+      color: #04aa6d;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
   </style>
-  <body>
-    <h2>Login</h2>
-    <form action="login.php" method="POST">
-      <label for="email"><b>Email:</b></label
-      ><br />
-      <input type="text" placeholder="Enter Email" name="email"  />
-      <br />
-      <label for="password"><b>Senha:</b></label
-      ><br />
-      <input type="password" placeholder="Enter Password" name="password" />
-      <br />
-      <button type="submit" name="login">Efetuar login</button><br />
-      <a href="registo.html"><b>Nao tenho conta!</b></a>
-    </form>
-  </body>
+</head>
+<body>
+  <h2>Login</h2>
+  <form action="login.php" method="POST">
+    <label for="email">Email</label>
+    <input type="text" id="email" name="email" placeholder="Enter Email" required />
+
+    <label for="password">Senha</label>
+    <input type="password" id="password" name="password" placeholder="Enter Password" required />
+
+    <button type="submit" name="login">Login</button>
+    <a href="registro.php"><b>Não tenho Conta!</b></a>
+  </form>
+</body>
 </html>
 
-<?php
 
-//criptografar passes
-//destruir sessoes
-include("../basedados/basedados.h");  
+
+<?php
+include ("../basedados/basedados.h");
 session_start();
 
-// Verifica se o formulário foi enviado com os campos 'email' e 'password'
-if ($_POST["email"] != "" && $_POST["password"] != "") {
-    $email = $_POST["email"];
-    $password = $_POST["password"];
+if (!empty($_POST["email"]) && !empty($_POST['password'])) {
+  // Obter valores do formulário
+  $email = mysqli_real_escape_string($conn, $_POST['email']);
+  $password = md5($_POST['password']);
 
-    $sql1 = "SELECT * FROM user WHERE estado='online'";
-    $result1 = mysqli_query($conn, $sql1);
-    if (mysqli_num_rows($result1) > 0 ) {
-        $update_sql = "UPDATE user SET estado = 'offline' WHERE estado = 'online'";
-        $update_result = mysqli_query($conn, $update_sql); //Atualiza o estado
-        session_destroy();
-    } 
+  // Preparar a consulta SQL
+  $sql = "SELECT * FROM users WHERE email='$email' AND password='$password'";
+  $result = mysqli_query($conn, $sql);
 
-    // Cria a consulta SQL para verificar se o email e a senha existem na tabela
-    $sql = "SELECT * FROM user WHERE email = '$email' AND password = '$password'";
+  // Verificar se o usuário foi encontrado
+  if ($result && mysqli_num_rows($result) > 0 ) {
+      // Obter os dados do usuário
+      $user = mysqli_fetch_assoc($result);
+      $_SESSION['user'] = $user;
+      
 
-    // Executa a consulta
-    $result = mysqli_query($conn, $sql);
+      if ($user['Autenticacao'] === 'Aceite') {
+        // Atualizar o estado do usuário para "Online"
+        $updateStatus = "UPDATE users SET Estado='Online' WHERE email='$email'";
+        mysqli_query($conn, $updateStatus);
 
-    // Verifica se a consulta retornou algum resultado
-    if (mysqli_num_rows($result) > 0) {
-        $user = mysqli_fetch_assoc($result);
+        $_SESSION['user']['Estado'] = 'Online';
 
-        if ($user['status'] === 'aprovado') {
-            $update_sql = "UPDATE user SET estado = 'online' WHERE email = '$email'";
-            $update_result = mysqli_query($conn, $update_sql); //Atualiza o estado
-            header("Refresh: 1; url=PaginaPrincipal.php");
-
-        } elseif ($user['status'] === 'pendente') {
-            echo "Seu acesso ainda não foi aprovado pelo administrador.";
-            header("Refresh: 3; url=login.php");
-
-        } elseif ($user['status'] === 'rejeitado') {
-            echo "Seu pedido foi rejeitado pelo administrador. Entre em contato.";
-            header("Refresh: 3; url=login.php");
-        }
-    } else {
-        // Caso insira algum dado incorreto, exibe uma mensagem de erro
-        echo "Email ou senha incorretos!";
-        header("Refresh: 2; url=login.php");
+        header("Refresh: 1; url=menu.php");
+        exit;
+    }elseif ($user['Autenticacao'] === 'Pendente') {
+      echo "Seu acesso ainda não foi aprovado pelo administrador.";
+      header("Refresh: 3; url=login.php");
     }
-} else {
-    // Caso os campos de email ou senha estejam vazios
-    echo "Preencha todos os campos!";
-    header("Refresh: 2; url=login.php");
+  } else {
+    echo "Email ou senha inválidos.";
+  }
 }
 
-// Fecha a conexão com o banco de dados
-mysqli_close($conn);
 ?>

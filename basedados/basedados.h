@@ -1,6 +1,6 @@
 <?php
 
-$database = 'felixbuspwbdlr';
+$database = 'felixbuslr24';
 $dbhost = 'localhost';
 $dbuser = 'root';
 $dbpass = '';

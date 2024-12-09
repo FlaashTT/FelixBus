@@ -2,9 +2,7 @@
 include("../basedados/basedados.h");
 session_start();
 
-$sql = "SELECT * FROM user WHERE estado = 'online'";
-$result = mysqli_query($conn, $sql);
-$update_sql = "UPDATE user SET estado = 'offline' WHERE estado = 'online'";
+$update_sql = "UPDATE users SET estado = 'Offline' WHERE estado = 'Online'";
 $update_result = mysqli_query($conn, $update_sql);
 
 // Verifica se a atualização foi bem-sucedida
