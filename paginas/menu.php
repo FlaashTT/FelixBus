@@ -103,7 +103,7 @@
     <div class="navbar">
         <a href="#contato">Contato</a>
         <a href="#ajuda">Suporte</a>
-        <p class="Hora"><?php echo date('Y-m-d H:i:s'); ?></p>
+        <p class="Hora"><?php echo date('Y-m-d H:i'); ?></p>
     </div>
 
     <!-- Sidebar -->
@@ -295,6 +295,7 @@
                             echo "<p>Nome: " . $userToverf['Nome'] . "</p>";
                             echo "<p>Email: " . $userToverf['Email'] . "</p>";
                             echo '<button type="submit" name="AceitarPedido" value="' . $userToverf['Email'] . '">Aceitar Utilizador</button>';
+                            echo '<button type="submit" name="RejeitarPedido" value="' . $userToverf['Email'] . '">Rejeitar Utilizador</button>';
                             echo "<hr>";
                             echo "</form>";
                         }
@@ -330,7 +331,6 @@
         if (isset($_POST['AceitarPedido'])) {
             $user_email = $_POST['AceitarPedido'];
 
-
             // Atualiza o campo 'Autenticacao' para 'Aceite' na base de dados
             $sql = "UPDATE users SET Autenticacao = 'Aceite' WHERE Email = '$user_email'";
 
@@ -342,12 +342,20 @@
             }
         }
 
+        if (isset($_POST['RejeitarPedido'])) {
+            $user_email = $_POST['RejeitarPedido'];
+            
+            // Atualiza o campo 'Autenticacao' para 'Aceite' na base de dados
+            $sql = "UPDATE users SET Autenticacao = 'Rejeitado' WHERE Email = '$user_email'";
 
+            if (mysqli_query($conn, $sql)) {
+                echo "<p>Utilizador Rejeitado com sucesso! </p>";
+                echo "<meta http-equiv='refresh' content='1;url=?page=Pedidos'>";
+            } else {
+                echo "Erro ao aceitar o usuário: " . mysqli_error($conn);
+            }
+        }
 
-        
-
-        
-        
         ?>
     </div>
 </body>

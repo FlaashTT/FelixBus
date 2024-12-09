@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,6 +67,7 @@
     }
   </style>
 </head>
+
 <body>
   <h2>Login</h2>
   <form action="login.php" method="POST">
@@ -79,12 +81,13 @@
     <a href="registro.php"><b>Não tenho Conta!</b></a>
   </form>
 </body>
+
 </html>
 
 
 
 <?php
-include ("../basedados/basedados.h");
+include("../basedados/basedados.h");
 session_start();
 
 if (!empty($_POST["email"]) && !empty($_POST['password'])) {
@@ -97,23 +100,26 @@ if (!empty($_POST["email"]) && !empty($_POST['password'])) {
   $result = mysqli_query($conn, $sql);
 
   // Verificar se o usuário foi encontrado
-  if ($result && mysqli_num_rows($result) > 0 ) {
-      // Obter os dados do usuário
-      $user = mysqli_fetch_assoc($result);
-      $_SESSION['user'] = $user;
-      
+  if ($result && mysqli_num_rows($result) > 0) {
+    // Obter os dados do usuário
+    $user = mysqli_fetch_assoc($result);
+    $_SESSION['user'] = $user;
 
-      if ($user['Autenticacao'] === 'Aceite') {
-        // Atualizar o estado do usuário para "Online"
-        $updateStatus = "UPDATE users SET Estado='Online' WHERE email='$email'";
-        mysqli_query($conn, $updateStatus);
 
-        $_SESSION['user']['Estado'] = 'Online';
+    if ($user['Autenticacao'] === 'Aceite') {
+      // Atualizar o estado do usuário para "Online"
+      $updateStatus = "UPDATE users SET Estado='Online' WHERE email='$email'";
+      mysqli_query($conn, $updateStatus);
 
-        header("Refresh: 1; url=menu.php");
-        exit;
-    }elseif ($user['Autenticacao'] === 'Pendente') {
+      $_SESSION['user']['Estado'] = 'Online';
+
+      header("Refresh: 1; url=menu.php");
+      exit;
+    } elseif ($user['Autenticacao'] === 'Pendente') {
       echo "Seu acesso ainda não foi aprovado pelo administrador.";
+      header("Refresh: 3; url=login.php");
+    }else if($user['Autenticacao'] === 'Rejeitado'){
+      echo "A sua conta foi negada.";
       header("Refresh: 3; url=login.php");
     }
   } else {
