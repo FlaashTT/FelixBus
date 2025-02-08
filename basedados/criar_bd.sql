@@ -1,0 +1,175 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Feb 08, 2025 at 10:45 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `felixbus-recurso`
+--
+CREATE DATABASE IF NOT EXISTS `felixbus-recurso` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `felixbus-recurso`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `alertas`
+--
+
+CREATE TABLE IF NOT EXISTS `alertas` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `Texto_Alerta` varchar(255) NOT NULL,
+  `Data_Emissao` datetime NOT NULL DEFAULT current_timestamp(),
+  `Id_Remetente` int(11) NOT NULL,
+  `Tipo_Alerta` enum('Novo Registo','Promoção','Aviso','Criar Veículo','Editar Veículo','Eliminar Veículo','Aceitar Utilizador','Editar Utilizador','Eliminar Utilizador','Eliminar Rota','Criar Rota','Editar Rota','Editar Bilhete','Cancelar Bilhete','Criar Bilhete','Rejeitar Utilizador') NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `Id_Remetente` (`Id_Remetente`)
+) ENGINE=InnoDB AUTO_INCREMENT=97 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `alertas`
+--
+
+INSERT INTO `alertas` (`id`, `Texto_Alerta`, `Data_Emissao`, `Id_Remetente`, `Tipo_Alerta`) VALUES
+(3, 'Novo utilizador registado', '2025-02-07 19:06:04', 3, 'Novo Registo'),
+(4, 'Novo utilizador registado', '2025-02-07 19:06:28', 4, 'Novo Registo'),
+(5, 'Novo utilizador registado', '2025-02-07 19:06:51', 5, 'Novo Registo');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bilhetes`
+--
+
+CREATE TABLE IF NOT EXISTS `bilhetes` (
+  `id_bilhete` int(11) NOT NULL AUTO_INCREMENT,
+  `id_rota` int(11) NOT NULL,
+  `id_veiculo` int(11) NOT NULL,
+  `preco` decimal(10,2) NOT NULL,
+  `data` date NOT NULL,
+  `hora` time NOT NULL,
+  `estado_bilhete` enum('Ativo','Expirado','Cancelado') DEFAULT 'Ativo',
+  `lugaresComprados` int(11) DEFAULT 0,
+  `data_criacao` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_bilhete`),
+  KEY `id_rota` (`id_rota`),
+  KEY `id_veiculo` (`id_veiculo`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `compras_bilhetes`
+--
+
+CREATE TABLE IF NOT EXISTS `compras_bilhetes` (
+  `id_compra` int(11) NOT NULL AUTO_INCREMENT,
+  `id_bilhete` int(11) DEFAULT NULL,
+  `id_utilizador` int(11) DEFAULT NULL,
+  `num_passageiros` int(11) DEFAULT NULL,
+  `data_compra` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_compra`),
+  KEY `id_bilhete` (`id_bilhete`),
+  KEY `id_utilizador` (`id_utilizador`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rota`
+--
+
+CREATE TABLE IF NOT EXISTS `rota` (
+  `Id_Rota` int(11) NOT NULL AUTO_INCREMENT,
+  `Nome_Rota` varchar(255) NOT NULL,
+  `Origem` varchar(255) NOT NULL,
+  `Destino` varchar(255) NOT NULL,
+  `Distancia` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`Id_Rota`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `utilizadores`
+--
+
+CREATE TABLE IF NOT EXISTS `utilizadores` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `Nome` varchar(100) NOT NULL,
+  `Email` varchar(255) NOT NULL,
+  `Password` varchar(255) NOT NULL,
+  `Cargo` enum('Admin','Funcionario','Cliente') NOT NULL,
+  `Autenticacao` enum('Pendente','Aceite','Rejeitado','Eliminado') DEFAULT 'Pendente',
+  `Saldo` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `Estado` enum('Online','Offline') DEFAULT 'Offline',
+  `data_registro` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `Email` (`Email`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `utilizadores`
+--
+
+INSERT INTO `utilizadores` (`id`, `Nome`, `Email`, `Password`, `Cargo`, `Autenticacao`, `Saldo`, `Estado`, `data_registro`) VALUES
+(3, 'admin', 'admin@felixbus.com', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'Admin', 'Aceite', 0.00, 'Offline', '2025-02-07 18:06:04'),
+(4, 'funcionario', 'funcionario@felixbus.com', '24d96a103e8552cb162117e5b94b1ead596b9c0a94f73bc47f7d244d279cacf2', 'Funcionario', 'Aceite', 0.00, 'Offline', '2025-02-07 18:06:28'),
+(5, 'cliente', 'cliente@felixbus.com', 'a60b85d409a01d46023f90741e01b79543a3cb1ba048eaefbe5d7a63638043bf', 'Cliente', 'Aceite', 0.00, 'Offline', '2025-02-07 18:06:51');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `veiculos`
+--
+
+CREATE TABLE IF NOT EXISTS `veiculos` (
+  `Id_Veiculo` int(11) NOT NULL AUTO_INCREMENT,
+  `Nome_Veiculo` varchar(255) NOT NULL,
+  `Capacidade` int(11) NOT NULL,
+  `Matricula` varchar(20) NOT NULL,
+  PRIMARY KEY (`Id_Veiculo`),
+  UNIQUE KEY `Matricula` (`Matricula`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `alertas`
+--
+ALTER TABLE `alertas`
+  ADD CONSTRAINT `alertas_ibfk_1` FOREIGN KEY (`Id_Remetente`) REFERENCES `utilizadores` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `bilhetes`
+--
+ALTER TABLE `bilhetes`
+  ADD CONSTRAINT `bilhetes_ibfk_1` FOREIGN KEY (`id_rota`) REFERENCES `rota` (`Id_Rota`) ON DELETE CASCADE,
+  ADD CONSTRAINT `bilhetes_ibfk_2` FOREIGN KEY (`id_veiculo`) REFERENCES `veiculos` (`Id_Veiculo`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `compras_bilhetes`
+--
+ALTER TABLE `compras_bilhetes`
+  ADD CONSTRAINT `compras_bilhetes_ibfk_1` FOREIGN KEY (`id_bilhete`) REFERENCES `bilhetes` (`id_bilhete`),
+  ADD CONSTRAINT `compras_bilhetes_ibfk_2` FOREIGN KEY (`id_utilizador`) REFERENCES `utilizadores` (`id`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
