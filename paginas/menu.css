@@ -1,0 +1,745 @@
+/* Reset básico */
+.hidden{
+    display: none;
+}
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #333;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    margin: 0 10px;
+}
+
+.navbar a:hover {
+    background-color: #575757;
+    border-radius: 4px;
+}
+
+.navbar .logo {
+    font-size: 24px;
+    color: white;
+    font-weight: bold;
+}
+
+.navbar .Hora {
+    font-size: 16px;
+    padding-right: 40px;
+    color: white;
+}
+
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    position: fixed;
+    top: 50px;
+    left: 0;
+    background-color: #2c3e50;
+    height: 100%;
+    padding-top: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 5;
+}
+
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    padding: 15px;
+    display: block;
+    font-size: 18px;
+    transition: background-color 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #34495e;
+}
+
+.sidebar .logout {
+    background-color: rgb(255, 38, 0);
+    text-align: center;
+    padding: 12px;
+    color: white;
+    margin-top: 20px;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+}
+
+.sidebar .logout:hover {
+    background-color: rgb(107, 0, 0) ;
+}
+
+/* Conteúdo Paginas - Configuração */
+.content {
+    margin-left: 250px;
+    padding: 20px;
+    margin-top: 30px;
+}
+
+
+h1, h2 {
+    color: #2c3e50;
+}
+
+/* Grid de Bilhetes */
+.grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.grid-container-lado {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 280px;
+    text-align: center;
+}
+
+.grid-container-lado h3 {
+    color: #004b8d;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.grid-container-lado p {
+    font-size: 14px;
+    color: #555;
+    margin: 5px 0;
+}
+
+
+
+.texto-Adicionar {
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Formulário de edição ao lado do card */
+.edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-left: 20px;
+    flex: 1 1 300px;
+    background-color: white;
+    padding: 5px;
+    margin: 5px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.edit-form input,
+.edit-form button {
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.edit-form label {
+    font-weight: bold;
+}
+
+
+.card {
+    background-color: white;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+
+
+.card h3 {
+    font-size: 24px;
+    color: #34495e;
+}
+
+.card p {
+    font-size: 18px;
+    color: #7f8c8d;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .content {
+        margin-left: 0;
+        padding: 10px;
+    }
+    
+
+    .navbar .logo {
+        font-size: 20px;
+    }
+
+    .navbar .Hora {
+        font-size: 14px;
+    }
+}
+
+/* Tabela de rotas */
+.utilizadores-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border: 1px solid #ddd; 
+}
+
+.utilizadores-tabela th, .utilizadores-tabela td {
+    border: 1px solid #ddd; 
+    padding: 12px; 
+    text-align: left; 
+}
+
+.utilizadores-tabela th {
+    background-color: #2c3e50; 
+    color: white; 
+    font-weight: bold; 
+}
+
+.utilizadores-tabela tr:nth-child(even) {
+    background-color: #f9f9f9; 
+}
+
+.utilizadores-tabela tr:hover {
+    background-color: #f1f1f1; 
+}
+
+.utilizadores-tabela td {
+    color: #34495e; 
+}
+
+.utilizadores-tabela td:last-child {
+    text-align: center; 
+}
+
+.utilizadores-tabela td:first-child {
+    font-weight: bold; 
+}
+
+/* Estilo para o campo de filtro */
+.filtro {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.filtro:focus {
+    outline: none;
+    border-color: #2c3e50;
+    box-shadow: 0 0 5px rgba(44, 62, 80, 0.5);
+}
+
+.tabela-legenda {
+    text-align: center;
+    margin-top: 10px;
+    font-style: italic;
+    color: #777;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.filtrar-btn {
+    background-color: #4CAF50; 
+    color: white;
+}
+
+.filtrar-btn:hover {
+    background-color: #45a049;
+}
+
+
+.limpar-btn {
+    background-color: #f44336; 
+    color: white;
+}
+
+.limpar-btn:hover {
+    background-color: #e53935; 
+}
+
+input.filtro {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+}
+
+
+.aceitar-btn {
+    background-color: #4CAF50; 
+    color: white;
+}
+
+.aceitar-btn:hover {
+    background-color: #45a049; 
+}
+
+.recusar-btn {
+    background-color: #f44336; 
+    color: white;
+}
+
+.recusar-btn:hover {
+    background-color: #e53935; 
+}
+
+.adicionarRota-btn {
+    background-color: blue; 
+    color: white;
+}
+
+
+/* Estilo do formulário */
+.formulario {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; 
+    justify-content: space-between;
+}
+
+/* Estilo das opções de viagem (checkbox) */
+.opcoes-viagem {
+    display: flex;
+    flex-direction: column; 
+    gap: 10px; 
+}
+
+
+/* Estilo para cada campo de entrada */
+.campo, .checkbox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Customização do checkbox */
+.checkbox input[type="checkbox"] {
+    display: none; 
+}
+
+/* Estilo dos campos de texto, data e número */
+.input-text {
+    width: 200px;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+/* Estilo do botão de pesquisa */
+.btn-pesquisar {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+
+.btn-pesquisar:hover {
+    background-color: #45a049;
+}
+
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 30px;
+}
+
+/* Estilo dos cards */
+.card-Inicio {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Efeito de hover nos cards */
+.card-Inicio:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Título do card */
+.card-Inicio h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Texto do card */
+.card-Inicio p {
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+/* Estilo do botão "Saber mais" */
+.btn-saber-mais {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+/* Efeito hover no botão */
+.btn-saber-mais:hover {
+    background-color: #45a049;
+}
+
+/* DEFINICOES */
+.form-definicoes {
+    margin-bottom: 15px;
+}
+.form-definicoes label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.form-definicoes input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.btn-definicoes {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.btn-definicoes:hover {
+    background-color: #0056b3;
+}
+
+/* Botão azul para "Iniciar Sessão" */
+.login-btn {
+    background-color: #2db267; /* Azul padrão */
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Mantém a cor correta quando o cursor passa por cima */
+.login-btn:hover {
+    background-color: #09843e !important; /* Azul mais escuro */
+    color: white !important; /* Mantém o texto branco */
+    text-decoration: none !important; /* Remove qualquer sublinhado */
+}
+
+
+
+/* Estilo exclusivo para o formulário de edição */
+.card-editar-veiculo {
+    background-color: #f8f9fa; /* Cor de fundo diferente */
+    padding: 25px;
+    margin: 30px auto;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    max-width: 450px;
+}
+
+/* Estilizar títulos apenas no formulário de edição */
+.card-editar-veiculo h2 {
+    font-size: 24px;
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+/* Inputs exclusivos */
+.card-editar-veiculo input[type="text"],
+.card-editar-veiculo input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 2px solid #007bff;
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+    transition: border 0.3s ease-in-out;
+}
+
+/* Efeito ao focar no input */
+.card-editar-veiculo input[type="text"]:focus,
+.card-editar-veiculo input[type="number"]:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Botão de salvar exclusivo */
+.card-editar-veiculo button[name="ConfirmarEditarVeiculo"] {
+    background-color: #28a745;
+    color: white;
+}
+
+.card-editar-veiculo button[name="ConfirmarEditarVeiculo"]:hover {
+    background-color: #218838;
+}
+
+/* Botão de cancelar exclusivo */
+.card-editar-veiculo button.cancelar {
+    background-color: #dc3545;
+    color: white;
+}
+
+.card-editar-veiculo button.cancelar:hover {
+    background-color: #c82333;
+}
+
+/* Responsividade */
+@media (max-width: 500px) {
+    .card-editar-veiculo {
+        width: 90%;
+    }
+}
+
+/* Estilo para a paginação */
+.paginacao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 5px;
+}
+
+.paginacao a, .paginacao span {
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: 1px solid #007bff;
+    color: #007bff;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.paginacao a:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.paginacao .pagina-atual {
+    background-color: #007bff;
+    color: white;
+    cursor: default;
+}
+
+/* Estilo para os botões "Anterior" e "Próximo" */
+.paginacao .disabled {
+    border-color: #ccc;
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.paginacao .disabled:hover {
+    background-color: transparent;
+}
+
+.excluir-btn {
+    background-color: red; /* Cor de fundo vermelha */
+    color: white; /* Cor do texto em branco */
+    border: none; /* Sem borda */
+    padding: 10px 20px; /* Preenchimento para o botão */
+    cursor: pointer; /* Mudança do cursor para indicar que é clicável */
+    font-size: 16px; /* Tamanho da fonte */
+    border-radius: 5px; /* Bordas arredondadas */
+    transition: background-color 0.3s ease; /* Transição suave na cor de fundo */
+}
+
+.excluir-btn:hover {
+    background-color: darkred; /* Cor de fundo vermelha mais escura quando o botão é hover */
+}
+
+
+
+
+.content-Rotas-Pesquisa {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.resultado-card {
+    background: #fff;
+    padding: 16px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.locais {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.horarios {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.preco-e-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preco {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #27ae60;
+}
+
+.btn-continuar {
+    background-color: #27ae60;
+    color: white;
+    padding: 8px 16px;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+}
+
+.btn-continuar:hover {
+    background-color: #1e8e50;
+}
+
+.resultado-card .preco-e-btn form {
+    margin-left: 10px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .content-Rotas-Pesquisa {
+        padding: 10px;
+    }
+
+    .resultado-card {
+        padding: 12px;
+    }
+
+    .campo {
+        margin-bottom: 10px;
+    }
+
+    .input-text {
+        padding: 8px;
+    }
+
+    .btn-pesquisar {
+        padding: 8px;
+    }
+
+    .btn-continuar {
+        padding: 8px;
+    }
+}
+
+
+.button-container .btn {
+    padding: 10px 20px;
+    margin: 10px;
+    background-color: #4CAF50; /* Cor de fundo */
+    color: white; /* Cor do texto */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.button-container .btn:hover {
+    background-color: #45a049; /* Cor de fundo ao passar o mouse */
+}
+
+.cancel-btn {
+    background-color: red;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.cancel-btn:hover {
+    background-color: #cc0000; /* Cor mais escura quando o botão for sobrevoado */
+}

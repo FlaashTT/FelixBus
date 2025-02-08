@@ -1,0 +1,200 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #333;
+}
+
+form {
+    position: relative;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+#LOGO {
+    width: 150px; 
+    height: auto; 
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#LOGO:hover {
+    transform: scale(1.05); 
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2); 
+}
+
+input[type="email"],
+input[type="password"],
+input[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    margin: 12px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+}
+
+input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+}
+
+#esqueci-senha-login {
+    position: absolute; 
+    top: 0.2px; 
+    margin-top: 12px;
+    font-size: 14px;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: 500;
+    position: relative; 
+    transition: color 0.3s ease;
+}
+
+#esqueci-senha-login::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: #007bff;
+    left: 0;
+    bottom: -2px;
+    transition: width 0.3s ease;
+}
+
+#esqueci-senha-login:hover {
+    color: #0056b3;
+}
+
+#esqueci-senha-login:hover::after {
+    width: 100%; 
+}
+
+#esqueci-senha-login:hover {
+    animation: pulse 1s infinite; 
+}
+
+#esqueci-registrar-conta {
+    display: block;
+    margin-top: 12px;
+    font-size: 14px;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: 500;
+    position: relative; 
+    transition: color 0.3s ease;
+}
+
+#esqueci-registrar-conta::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: #007bff;
+    left: 0;
+    bottom: -2px;
+    transition: width 0.3s ease;
+}
+
+#esqueci-registrar-conta:hover {
+    color: #0056b3;
+}
+
+#esqueci-registrar-conta:hover::after {
+    width: 100%; 
+}
+
+#esqueci-registrar-conta:hover {
+    animation: pulse 1s infinite; 
+}
+
+
+#pagina-inicial {
+    display: block;
+    margin-top: 12px;
+    font-size: 14px;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: 500;
+    position: relative; 
+    transition: color 0.3s ease;
+}
+
+#pagina-inicial::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    background-color: #007bff;
+    left: 0;
+    bottom: -2px;
+    transition: width 0.3s ease;
+}
+
+#pagina-inicial:hover {
+    color: #0056b3;
+}
+
+#pagina-inicial:hover::after {
+    width: 100%; 
+}
+
+#pagina-inicial:hover {
+    animation: pulse 1s infinite; 
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+form:hover {
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+}
