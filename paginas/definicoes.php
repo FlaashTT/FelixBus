@@ -188,7 +188,6 @@ $stmt->close();
         ?>
     </div>
 
-    <!-- Conteúdo Principal -->
     <div class="content">
 
         <h1>Editar Perfil</h1>
