@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Se a senha antiga estiver correta, verifica se há uma nova senha
             if (!empty($nova_senha)) {
                 $nova_senha_hash = hash('sha256', $nova_senha);
-                $sql = "UPDATE utilizadores SET Nome = ?, Email = ?, Senha = ? WHERE id = ?";
+                $sql = "UPDATE utilizadores SET Nome = ?, Email = ?, Password = ? WHERE id = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("sssi", $nome, $email, $nova_senha_hash, $userId);
             } else {
