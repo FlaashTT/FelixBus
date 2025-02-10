@@ -126,9 +126,9 @@ CREATE TABLE IF NOT EXISTS `utilizadores` (
 --
 
 INSERT INTO `utilizadores` (`id`, `Nome`, `Email`, `Password`, `Cargo`, `Autenticacao`, `Saldo`, `Estado`, `data_registro`) VALUES
-(3, 'admin', 'admin@felixbus.com', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'Admin', 'Aceite', 0.00, 'Offline', '2025-02-07 18:06:04'),
-(4, 'funcionario', 'funcionario@felixbus.com', '24d96a103e8552cb162117e5b94b1ead596b9c0a94f73bc47f7d244d279cacf2', 'Funcionario', 'Aceite', 0.00, 'Offline', '2025-02-07 18:06:28'),
-(5, 'cliente', 'cliente@felixbus.com', 'a60b85d409a01d46023f90741e01b79543a3cb1ba048eaefbe5d7a63638043bf', 'Cliente', 'Aceite', 0.00, 'Offline', '2025-02-07 18:06:51');
+(3, 'admin', 'admin@gmail.com', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 'Admin', 'Aceite', 0.00, 'Offline', '2025-02-07 18:06:04'),
+(4, 'funcionario', 'funcionario@gmail.com', '24d96a103e8552cb162117e5b94b1ead596b9c0a94f73bc47f7d244d279cacf2', 'Funcionario', 'Aceite', 0.00, 'Offline', '2025-02-07 18:06:28'),
+(5, 'cliente', 'cliente@gmail.com', 'a60b85d409a01d46023f90741e01b79543a3cb1ba048eaefbe5d7a63638043bf', 'Cliente', 'Aceite', 0.00, 'Offline', '2025-02-07 18:06:51');
 
 -- --------------------------------------------------------
 
