@@ -42,24 +42,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Se a senha antiga estiver correta, verifica se há uma nova senha
             if (!empty($nova_senha)) {
                 $nova_senha_hash = hash('sha256', $nova_senha);
-                $sql = "UPDATE utilizadores SET Nome = ?, Email = ?, Password = ? WHERE id = ?";
+                $sql = "UPDATE utilizadores SET Nome = ?, Email = ?, Senha = ? WHERE id = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("sssi", $nome, $email, $nova_senha_hash, $userId);
+            } else {
+                // Se não houver nova senha, apenas atualiza nome e email
+                $sql = "UPDATE utilizadores SET Nome = ?, Email = ? WHERE id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ssi", $nome, $email, $userId);
             }
-        }
-    } else {
-        // Se a senha antiga não for fornecida, atualiza apenas nome e email
-        $sql = "UPDATE utilizadores SET Nome = ?, Email = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssi", $nome, $email, $userId);
-    }
 
-    if ($stmt->execute()) {
-        $msg = "<p class='success-msg'>Perfil atualizado com sucesso!</p>";
-    } else {
-        $msg = "<p class='error-msg'>Erro ao atualizar o perfil.</p>";
+            // Executa a atualização dos dados
+            if ($stmt->execute()) {
+                $msg = "<p class='success-msg'>Perfil atualizado com sucesso!</p>";
+            } else {
+                $msg = "<p class='error-msg'>Erro ao atualizar o perfil.</p>";
+            }
+
+            $stmt->close(); // Fecha a consulta após execução
+        }
     }
-    $stmt->close();
 }
 
 // Buscar os dados atuais do utilizador para exibir no formulário
