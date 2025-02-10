@@ -15,36 +15,60 @@ if (isset($_SESSION['utilizador'])) {
     $cargoUser = "Visitante";
 }
 
+// Mensagem de feedback
+$msg = "";
+
 // Verifica se foi enviado o formulário para editar o perfil
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = $_POST['nome'];
     $email = $_POST['email'];
-    $senha = $_POST['senha'];
+    $senha_antiga = $_POST['senha_antiga'];
+    $nova_senha = $_POST['nova_senha'];
 
-    // Se a senha foi alterada, aplica a mudança com SHA-256
-    if (!empty($senha)) {
-        $senha = hash('sha256', $senha); // Usando SHA-256
-        $sql = "UPDATE utilizadores SET Nome = ?, Email = ?, Senha = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssi", $nome, $email, $senha, $userId);
+    // Buscar a senha atual na base de dados
+    $sql = "SELECT Senha FROM utilizadores WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $stmt->bind_result($senha_bd);
+    $stmt->fetch();
+    $stmt->close();
+
+    // Se a senha antiga for introduzida, verifica se está correta antes de permitir a atualização
+    if (!empty($senha_antiga)) {
+        if (hash('sha256', $senha_antiga) !== $senha_bd) {
+            $msg = "<p class='error-msg'>Erro: A senha antiga não está correta.</p>";
+        } else {
+            // Se a senha antiga estiver correta, verifica se há uma nova senha
+            if (!empty($nova_senha)) {
+                $nova_senha_hash = hash('sha256', $nova_senha);
+                $sql = "UPDATE utilizadores SET Nome = ?, Email = ?, Senha = ? WHERE id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("sssi", $nome, $email, $nova_senha_hash, $userId);
+            }
+        }
     } else {
-        // Se a senha não for alterada, não atualiza a senha
+        // Se a senha antiga não for fornecida, atualiza apenas nome e email
         $sql = "UPDATE utilizadores SET Nome = ?, Email = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssi", $nome, $email, $userId);
     }
 
     if ($stmt->execute()) {
-        echo "<p>Perfil atualizado com sucesso!</p>";
+        $msg = "<p class='success-msg'>Perfil atualizado com sucesso!</p>";
     } else {
-        echo "<p>Erro ao atualizar o perfil.</p>";
+        $msg = "<p class='error-msg'>Erro ao atualizar o perfil.</p>";
     }
 }
 
 // Buscar os dados atuais do utilizador para exibir no formulário
-$sql = "SELECT Nome, Email FROM utilizadores WHERE id = '$userId'";
-$result = mysqli_query($conn, $sql);
-$user = mysqli_fetch_assoc($result);
+$sql = "SELECT Nome, Email FROM utilizadores WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$stmt->close();
 ?>
 
 <!DOCTYPE html>
@@ -53,7 +77,7 @@ $user = mysqli_fetch_assoc($result);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adicionar Saldo - FelixBus</title>
+    <title>Editar Perfil - FelixBus</title>
     <link rel="stylesheet" href="../paginas/menu.css">
     <style>
         .form-container {
@@ -70,7 +94,9 @@ $user = mysqli_fetch_assoc($result);
             color: #555;
         }
 
-        input[type="number"] {
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
             width: 100%;
             padding: 10px;
             margin-top: 10px;
@@ -105,6 +131,23 @@ $user = mysqli_fetch_assoc($result);
             color: red;
             font-size: 16px;
             margin-top: 20px;
+        }
+
+        .cancel-btn {
+            background-color: #dc3545;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            text-align: center;
+            border-radius: 5px;
+            border: none;
+            font-size: 18px;
+        }
+
+        .cancel-btn:hover {
+            background-color: #c82333;
         }
     </style>
 </head>
@@ -145,28 +188,26 @@ $user = mysqli_fetch_assoc($result);
     <!-- Conteúdo Principal -->
     <div class="content">
 
-        <h1>Definições</h1>
+        <h1>Editar Perfil</h1>
         <div class="form-container">
 
             <?php
             // Exibe a mensagem de sucesso ou erro
-            if (isset($msg)) {
-                echo $msg;
-            }
+            echo $msg;
             ?>
 
             <form method="POST">
                 <label for="nome">Nome:</label>
                 <input class='texto-Adicionar' type="text" name="nome" value="<?php echo $user['Nome']; ?>" required>
-                <br>
 
                 <label for="email">Email:</label>
                 <input class='texto-Adicionar' type="email" name="email" value="<?php echo $user['Email']; ?>" required>
-                <br>
 
-                <label for="senha">Nova Senha (opcional):</label>
-                <input class='texto-Adicionar' type="password" name="senha">
-                <br>
+                <label for="senha_antiga">Senha Atual:</label>
+                <input class='texto-Adicionar' type="password" name="senha_antiga">
+
+                <label for="nova_senha">Nova Senha (opcional):</label>
+                <input class='texto-Adicionar' type="password" name="nova_senha">
 
                 <button type="submit">Atualizar Perfil</button>
                 <a href="perfil.php">
@@ -176,17 +217,6 @@ $user = mysqli_fetch_assoc($result);
         </div>
 
     </div>
-    <script>
-        function updateTime() {
-            const date = new Date();
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-            document.getElementById('hora').textContent = hours + ":" + minutes + ":" + seconds;
-        }
-        setInterval(updateTime, 1000);
-        updateTime(); // Inicializa a hora ao carregar a página
-    </script>
 
 </body>
 
