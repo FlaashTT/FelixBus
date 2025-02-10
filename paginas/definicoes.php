@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $msg = "<p class='error-msg'>Erro ao atualizar o perfil.</p>";
     }
+    $stmt->close();
 }
 
 // Buscar os dados atuais do utilizador para exibir no formulário
