@@ -16,7 +16,7 @@ if (isset($_SESSION['utilizador'])) {
     $cargoUser = "Visitante";
 }
 
-// 📌 Função para criar alerta no sistema
+// Função para criar alerta no sistema
 function criar_alerta($mensagem, $tipo)
 {
     global $conn;
@@ -82,7 +82,6 @@ function criar_alerta($mensagem, $tipo)
         ?>
     </div>
 
-    <!-- Conteúdo Principal -->
     <div class="content">
         <h1>Gestão de Veículos</h1>
         <h2>Visão geral da frota</h2>
@@ -92,7 +91,7 @@ function criar_alerta($mensagem, $tipo)
         </form>
 
         <?php
-        // 📌 FORMULÁRIO PARA ADICIONAR VEÍCULO
+        // FORMULÁRIO PARA ADICIONAR VEÍCULO
         if (isset($_POST['adicionarVeiculo'])) {
             echo "
             <form method='POST' action=''>
@@ -107,7 +106,7 @@ function criar_alerta($mensagem, $tipo)
             </form>";
         }
 
-        // 📌 INSERIR VEÍCULO NO BD
+        // INSERIR VEÍCULO NO BD
         if (isset($_POST['ConfirmarAddVeiculo'])) {
             $nomeVeiculo = $_POST['nomeVeiculo'];
             $capacidade = $_POST['capacidade'];
@@ -123,7 +122,7 @@ function criar_alerta($mensagem, $tipo)
             }
         }
 
-        // 📌 LISTAR VEÍCULOS
+        // LISTAR VEÍCULOS
         $result = $conn->query("SELECT * FROM Veiculos");
         if ($result->num_rows > 0) {
             echo "<h1>Lista de Veículos</h1><div class='grid-container'>";
@@ -146,7 +145,7 @@ function criar_alerta($mensagem, $tipo)
             echo "<p>Não há veículos inseridos.</p>";
         }
 
-        // 📌 FORMULÁRIO DE EDIÇÃO
+        // FORMULÁRIO DE EDIÇÃO
         if (isset($_POST['editarVeiculo'])) {
             $idVeiculo = $_POST['editarVeiculo'];
             $veiculo = $conn->query("SELECT * FROM Veiculos WHERE Id_Veiculo = $idVeiculo")->fetch_assoc();
@@ -164,7 +163,7 @@ function criar_alerta($mensagem, $tipo)
             </form>";
         }
 
-        // 📌 ATUALIZAR VEÍCULO
+        // ATUALIZAR VEÍCULO
         if (isset($_POST['ConfirmarEditarVeiculo'])) {
             $idVeiculo = $_POST['idVeiculo'];
             $novoNome = $_POST['novoNomeVeiculo'];
@@ -176,7 +175,7 @@ function criar_alerta($mensagem, $tipo)
             header("Refresh: 2; url=gestao_veiculos.php");
         }
 
-        // 📌 ELIMINAR VEÍCULO
+        // ELIMINAR VEÍCULO
         if (isset($_POST['eliminarVeiculo'])) {
             $idVeiculo = $_POST['eliminarVeiculo'];
 
@@ -192,7 +191,7 @@ function criar_alerta($mensagem, $tipo)
     </form>';
         }
 
-        // 📌 PROCESSAR ELIMINAÇÃO
+        // PROCESSAR ELIMINAÇÃO
         if (isset($_POST['confirmarEliminarVeiculo'])) {
             $idVeiculo = $_POST['confirmarEliminarVeiculo'];
 
@@ -219,7 +218,7 @@ function criar_alerta($mensagem, $tipo)
             document.getElementById('hora').textContent = hours + ":" + minutes + ":" + seconds;
         }
         setInterval(updateTime, 1000);
-        updateTime(); // Inicializa a hora ao carregar a página
+        updateTime(); 
     </script>
 
 </body>

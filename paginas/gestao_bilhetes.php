@@ -10,7 +10,7 @@ validar_acesso(['Funcionario', 'Admin']);
 
 $cargoUser = isset($_SESSION['utilizador']) ? $_SESSION['utilizador']['Cargo'] : "Visitante";
 
-// 📌 Função para criar alerta no sistema
+// Função para criar alerta no sistema
 function criar_alerta($mensagem, $tipo)
 {
     global $conn;
@@ -24,13 +24,13 @@ function criar_alerta($mensagem, $tipo)
 
     // Execute a query uma vez e verifique se a inserção foi bem-sucedida
     if ($stmt->execute()) {
-        return true;  // Retorna true se a inserção for bem-sucedida
+        return true;
     } else {
-        return "Erro ao criar alerta: " . $stmt->error;  // Retorna a mensagem de erro, caso haja um erro na execução
+        return "Erro ao criar alerta: " . $stmt->error;
     }
 }
 
-// 📌 Verificar se existe alerta de promoção ativo para uma rota
+// Verificar se existe alerta de promoção ativo para uma rota
 function verificar_promocao($idRota)
 {
     global $conn;
@@ -49,7 +49,7 @@ function verificar_promocao($idRota)
     return 0;  // Sem desconto
 }
 
-// 📌 Atualizar bilhetes expirados automaticamente
+// Atualizar bilhetes expirados automaticamente
 $dataAtual = date('Y-m-d');
 $horaAtual = date('H:i:s');
 $sql = "UPDATE bilhetes SET estado_bilhete = 'Expirado' WHERE estado_bilhete = 'Ativo' AND (data < '$dataAtual' OR (data = '$dataAtual' AND hora < '$horaAtual'))";
@@ -57,7 +57,7 @@ mysqli_query($conn, $sql);
 
 
 
-/// 📌 Função para aplicar a promoção no preço
+// Função para aplicar a promoção no preço
 function aplicar_promocao($preco, $idRota)
 {
     // Verifica se existe promoção ativa para a rota
@@ -70,7 +70,7 @@ function aplicar_promocao($preco, $idRota)
 }
 
 
-// 📌 Obter bilhetes conforme o estado selecionado
+// Obter bilhetes conforme o estado selecionado
 function obterBilhetesPorEstado($estado)
 {
     global $conn;
@@ -83,11 +83,11 @@ function obterBilhetesPorEstado($estado)
     return mysqli_query($conn, $sql);
 }
 
-// 📌 Determinar qual estado exibir (Padrão: Ativo)
+// Determinar qual estado exibir (Padrão: Ativo)
 $estadoSelecionado = isset($_POST['estado']) ? $_POST['estado'] : 'Ativo';
 $bilhetes = obterBilhetesPorEstado($estadoSelecionado);
 
-// 📌 Editar bilhete ativo
+// Editar bilhete ativo
 if (isset($_POST['editarBilheteConfirmado'])) {
     $idBilhete = $_POST['idBilhete'];
     $novaData = $_POST['novaData'];
@@ -104,7 +104,7 @@ if (isset($_POST['editarBilheteConfirmado'])) {
     }
 }
 
-// 📌 Eliminar bilhete (vai para "Cancelado")
+// Eliminar bilhete | vai para "Cancelado" |
 if (isset($_POST['eliminarBilhete'])) {
     $idBilhete = $_POST['eliminarBilhete'];
 
@@ -165,7 +165,7 @@ if (isset($_POST['eliminarBilhete'])) {
         <h1>Gestão de Bilhetes</h1>
 
         <form method="POST">
-        <button class='adicionar-btn' type="submit" name="adicionarBilhete">Adicionar Bilhete</button>
+            <button class='adicionar-btn' type="submit" name="adicionarBilhete">Adicionar Bilhete</button>
             <button class='estado-btn' type="submit" name="estado" value="Ativo">Bilhetes Ativos</button>
             <button class='estado-btn' type="submit" name="estado" value="Expirado">Bilhetes Expirados</button>
             <button class='estado-btn' type="submit" name="estado" value="Cancelado">Bilhetes Cancelados</button>
@@ -207,44 +207,44 @@ if (isset($_POST['eliminarBilhete'])) {
                         <p><b>Hora:</b> " . $bilhete['hora'] . "</p>
                         <p><b>Preço:</b> " . $bilhete['preco'] . " €</p>
                         <p><b>Estado:</b> " . $bilhete['estado_bilhete'] . "</p>";
-        
-            // **Apenas bilhetes ativos podem ser editados ou eliminados**
+
+            // Apenas bilhetes ativos podem ser editados ou eliminados**
             if ($bilhete['estado_bilhete'] === "Ativo") {
                 echo "<form method='POST'>
                         <button class='editar-btn' type='submit' name='editarBilhete' value='" . $bilhete['id_bilhete'] . "'>Editar</button>
                         <button class='eliminar-btn' type='submit' name='eliminarBilhete' value='" . $bilhete['id_bilhete'] . "'>Eliminar</button>
                       </form>";
             }
-        
+
             echo "  </div> <!-- Fecha grid-container-lado -->
-                 </div>"; // Fecha grid-container
+                 </div>";
         }
-        
+
 
         if (isset($_POST['confirmarBilhete'])) {
             $idRota = $_POST['idRota'];
             $dataBilhete = $_POST['dataBilhete'];
             $horaBilhete = $_POST['horaBilhete'];
             $idVeiculo = $_POST['idVeiculo'];
-        
+
             // Verifica se a rota existe
             $sql = "SELECT distancia FROM rota WHERE Id_Rota = '$idRota'";
             $result = mysqli_query($conn, $sql);
-        
+
             if (!$result || mysqli_num_rows($result) == 0) {
                 echo "<p>Erro: A rota não existe!</p>";
             } else {
                 $row = mysqli_fetch_assoc($result);
                 $distancia = $row['distancia'];
                 $preco = $distancia * 1.00; // Preço por Km
-        
+
                 // Aplica o desconto caso haja promoção ativa
                 $precoComDesconto = aplicar_promocao($preco, $idRota);
-        
+
                 // Agora o valor do preço com desconto é usado na inserção do bilhete
                 $sql = "INSERT INTO bilhetes (id_rota, data, hora, id_veiculo, preco, estado_bilhete) 
                         VALUES ('$idRota', '$dataBilhete', '$horaBilhete', '$idVeiculo', '$precoComDesconto', 'Ativo')";
-        
+
                 if (mysqli_query($conn, $sql)) {
                     criar_alerta("Bilhete criado para a rota $idRota", "Criar Bilhete");
                     echo "<p>Bilhete adicionado com sucesso com o preço de $precoComDesconto €!</p>";
@@ -254,9 +254,9 @@ if (isset($_POST['eliminarBilhete'])) {
                 }
             }
         }
-        
 
-        // 📌 Formulário de edição de bilhete
+
+        // Formulário de edição de bilhete
         if (isset($_POST['editarBilhete'])) {
             $idBilhete = $_POST['editarBilhete'];
             echo "

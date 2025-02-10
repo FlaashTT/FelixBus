@@ -16,7 +16,7 @@ if (isset($_SESSION['utilizador'])) {
     $cargoUser = "Visitante";
 }
 
-// 📌 Função para criar alerta no sistema
+// Função para criar alerta no sistema
 function criar_alerta($mensagem, $tipo)
 {
     global $conn;
@@ -30,14 +30,14 @@ function criar_alerta($mensagem, $tipo)
 
     // Execute a query uma vez e verifique se a inserção foi bem-sucedida
     if ($stmt->execute()) {
-        return true;  // Retorna true se a inserção for bem-sucedida
+        return true;  
     } else {
-        return "Erro ao criar alerta: " . $stmt->error;  // Retorna a mensagem de erro, caso haja um erro na execução
+        return "Erro ao criar alerta: " . $stmt->error;  
     }
 }
 
 
-// 📌 Aceitar Pedido
+// Aceitar Pedido
 if (isset($_POST['AceitarPedido'])) {
     $user_email = $_POST['AceitarPedido'];
     $sql = "UPDATE utilizadores SET Autenticacao = 'Aceite' WHERE Email = ?";
@@ -52,7 +52,7 @@ if (isset($_POST['AceitarPedido'])) {
     }
 }
 
-// 📌 Rejeitar Pedido
+// Rejeitar Pedido
 if (isset($_POST['RejeitarPedido'])) {
     $user_email = $_POST['RejeitarPedido'];
     $sql = "UPDATE utilizadores SET Autenticacao = 'Rejeitado' WHERE Email = ?";
@@ -67,7 +67,7 @@ if (isset($_POST['RejeitarPedido'])) {
     }
 }
 
-// 📌 Obter pedidos pendentes
+// Obter pedidos pendentes
 $sql = "SELECT * FROM utilizadores WHERE Autenticacao = 'Pendente'";
 $pedidosPendentes = mysqli_query($conn, $sql);
 ?>

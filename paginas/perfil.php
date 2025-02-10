@@ -68,13 +68,12 @@ validar_acesso(['Funcionario', 'Admin', 'Cliente']);
 
     </div>
 
-    <!-- Conteúdo Principal -->
     <div class="content">
         <div class="card">
             <!-- Informações do utilizador -->
             <?php
             $userId = $_SESSION['utilizador']['id'];
-            // Ajustando o SQL para utilizar a tabela de utilizadores do seu sistema
+            // Ajuste do SQL para utilizar a tabela de utilizadores do seu sistema
             $sql = "SELECT * FROM utilizadores WHERE id = '$userId' AND estado = 'Online'";
 
             if ($result = mysqli_query($conn, $sql)) {
@@ -88,19 +87,18 @@ validar_acesso(['Funcionario', 'Admin', 'Cliente']);
                 }
             }
             ?>
-            <!-- Botões abaixo do saldo -->
             <div class="button-container" style="margin-top: 20px; text-align: center;">
-                <!-- Botão para adicionar saldo -->
+                
                 <a href="adicionar_Saldo.php">
                     <button class="btn">Adicionar Saldo</button>
                 </a>
 
-                <!-- Botão para levantar dinheiro -->
+                
                 <a href="levantar_Saldo.php">
                     <button class="btn">Levantar Dinheiro</button>
                 </a>
 
-                <!-- Botão para editar perfil (Definições) -->
+                
                 <a href="definicoes.php">
                     <button class="btn">Definições</button>
                 </a>
@@ -110,7 +108,7 @@ validar_acesso(['Funcionario', 'Admin', 'Cliente']);
         <div class="grid-container">
 
             <?php
-            // Ajustando o SQL para refletir a estrutura do seu banco de dados
+            // Ajuste do SQL para refletir a estrutura do seu banco de dados
             $sql = "SELECT b.*, r.*
                     FROM compras_bilhetes cb
                     INNER JOIN bilhetes b ON cb.id_bilhete = b.id_bilhete
@@ -172,7 +170,7 @@ validar_acesso(['Funcionario', 'Admin', 'Cliente']);
                 $idBilhete = $_POST['reembolsarBilhete'];
                 $valor = $_POST['valorAReceber'];  // Este valor vem do preço do bilhete
 
-                // Passo 1: Obter o número de lugares comprados e o valor gasto da tabela bilhetes
+                // Obter o número de lugares comprados e o valor gasto da tabela bilhetes
                 $sqlCompra = "SELECT lugaresComprados, preco 
                               FROM bilhetes 
                               WHERE id_bilhete = ?";
@@ -190,25 +188,25 @@ validar_acesso(['Funcionario', 'Admin', 'Cliente']);
                     // Calcular o valor total do reembolso
                     $totalReembolso = $precoUnitario * $quantidadeLugares;
 
-                    // Passo 2: Devolver o valor do bilhete ao saldo do utilizador
+                    // Devolver o valor do bilhete ao saldo do utilizador
                     $sqlSaldo = "UPDATE utilizadores SET Saldo = Saldo + ? WHERE id = ?";
                     $stmtSaldo = $conn->prepare($sqlSaldo);
                     $stmtSaldo->bind_param("di", $totalReembolso, $userId);
 
                     if ($stmtSaldo->execute()) {
-                        // Passo 3: Liberar o lugar no bilhete
+                        // Liberar o lugar no bilhete
                         $sqlUpdateBilhete = "UPDATE bilhetes SET lugaresComprados = lugaresComprados - ? WHERE id_bilhete = ?";
                         $stmtUpdateBilhete = $conn->prepare($sqlUpdateBilhete);
                         $stmtUpdateBilhete->bind_param("ii", $quantidadeLugares, $idBilhete);
 
                         if ($stmtUpdateBilhete->execute()) {
-                            // Passo 4: Remover a transação de compra da tabela de compras
+                            // Remover a transação de compra da tabela de compras
                             $sqlDeleteCompra = "DELETE FROM compras_bilhetes WHERE id_bilhete = ? AND id_utilizador = ?";
                             $stmtDeleteCompra = $conn->prepare($sqlDeleteCompra);
                             $stmtDeleteCompra->bind_param("ii", $idBilhete, $userId);
 
                             if ($stmtDeleteCompra->execute()) {
-                                // Passo 5: Confirmar sucesso
+                                // Confirmar sucesso
                                 echo "Bilhete reembolsado com sucesso!";
                                 header("Refresh: 2; url=perfil.php");
                             } else {

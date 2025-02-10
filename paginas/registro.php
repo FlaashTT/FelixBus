@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Verifica se a senha tem pelo menos 5 caracteres
         if (strlen($password) < 5) {
-            echo "<script>alert('A senha deve ter pelo menos 8 caracteres.'); window.location.href = 'registro.php';</script>";
+            echo "<script>alert('A senha deve ter pelo menos 5 caracteres.'); window.location.href = 'registro.php';</script>";
             exit;
         }
 

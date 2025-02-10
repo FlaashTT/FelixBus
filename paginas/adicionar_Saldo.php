@@ -19,7 +19,7 @@ if (isset($_SESSION['utilizador'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['valor'])) {
     $valor = $_POST['valor'];
 
-    // Validação: o valor não pode ser negativo ou zero
+    // Validação - o valor não pode ser negativo ou zero
     if ($valor > 0) {
         // Atualiza o saldo do utilizador
         $sql = "UPDATE utilizadores SET Saldo = Saldo + ? WHERE id = ?";
@@ -133,7 +133,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['valor'])) {
         ?>
     </div>
 
-    <!-- Conteúdo Principal -->
     <div class="content">
 
         <h1>Adicionar Saldo</h1>
@@ -166,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['valor'])) {
             document.getElementById('hora').textContent = hours + ":" + minutes + ":" + seconds;
         }
         setInterval(updateTime, 1000);
-        updateTime(); // Inicializa a hora ao carregar a página
+        updateTime(); 
     </script>
 
 </body>

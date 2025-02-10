@@ -30,9 +30,9 @@ function criar_alerta($mensagem, $tipo)
 
     // Execute a query uma vez e verifique se a inserção foi bem-sucedida
     if ($stmt->execute()) {
-        return true;  // Retorna true se a inserção for bem-sucedida
+        return true;  
     } else {
-        return "Erro ao criar alerta: " . $stmt->error;  // Retorna a mensagem de erro, caso haja um erro na execução
+        return "Erro ao criar alerta: " . $stmt->error;  
     }
 }
 
@@ -53,7 +53,7 @@ function gestaoAlertas($filtro = '', $inicio, $limite)
             FROM alertas 
             INNER JOIN utilizadores ON alertas.Id_Remetente = utilizadores.Id";
 
-    // Adiciona o filtro (se houver)
+    // Adiciona o filtro | se houver |
     if (!empty($filtro)) {
         // Protege contra SQL Injection
         $filtro = mysqli_real_escape_string($conn, $filtro);
@@ -62,15 +62,15 @@ function gestaoAlertas($filtro = '', $inicio, $limite)
                   OR alertas.Tipo_Alerta LIKE '%$filtro%'";
     }
 
-    // Limita o número de alertas por página (12 alertas por página)
+    // Limita o número de alertas por página | 12 alertas por página |
     $sql .= " LIMIT $inicio, $limite";
 
-    // Executa a consulta
+    
     $result = mysqli_query($conn, $sql);
 
     // Verifica se a consulta foi bem-sucedida
     if (!$result) {
-        die('Erro na consulta: ' . mysqli_error($conn)); // Se houver erro na consulta
+        die('Erro na consulta: ' . mysqli_error($conn)); 
     }
 
     return $result; // Retorna o resultado da consulta
@@ -86,7 +86,6 @@ if (isset($_POST['excluirPromocao'])) {
     $stmt->bind_param("i", $idAlerta);
 
     if ($stmt->execute()) {
-        // Redireciona a página para evitar o loop de submissão do formulário
         echo "<script>window.location.href = 'gestao_alertas.php';</script>";
         exit();
     } else {
@@ -103,11 +102,10 @@ if (isset($_POST['reset']) && $_POST['reset'] == 'true') {
 }
 
 // Paginacao
-$limite = 12; // Número de alertas por página
+$limite = 12; 
 $pagina_atual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1; // Página atual (se não for passada, começa da 1)
 $inicio = ($pagina_atual - 1) * $limite; // Calcular o início da consulta
 
-// Consultar total de alertas para calcular número de páginas
 $sqlTotal = "SELECT COUNT(*) AS total FROM alertas";
 $resultTotal = mysqli_query($conn, $sqlTotal);
 $totalAlertas = mysqli_fetch_assoc($resultTotal)['total'];

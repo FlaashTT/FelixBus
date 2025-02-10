@@ -16,7 +16,7 @@ if (isset($_SESSION['utilizador'])) {
     $cargoUser = "Visitante";
 }
 
-// 📌 Função para criar alerta no sistema
+// Função para criar alerta no sistema
 function criar_alerta($mensagem, $tipo)
 {
     global $conn;
@@ -30,9 +30,9 @@ function criar_alerta($mensagem, $tipo)
 
     // Execute a query uma vez e verifique se a inserção foi bem-sucedida
     if ($stmt->execute()) {
-        return true;  // Retorna true se a inserção for bem-sucedida
+        return true; 
     } else {
-        return "Erro ao criar alerta: " . $stmt->error;  // Retorna a mensagem de erro, caso haja um erro na execução
+        return "Erro ao criar alerta: " . $stmt->error;  
     }
 }
 
@@ -81,7 +81,6 @@ function criar_alerta($mensagem, $tipo)
         ?>
     </div>
 
-    <!-- Conteúdo Principal -->
     <div class="content">
         <h1>Gestão de Rotas</h1>
         <h2>Visão geral das rotas</h2>
@@ -91,7 +90,7 @@ function criar_alerta($mensagem, $tipo)
         </form>
 
         <?php
-        // 📌 FORMULÁRIO PARA ADICIONAR ROTA
+        // FORMULÁRIO PARA ADICIONAR ROTA
         if (isset($_POST['adicionarRota'])) {
             echo "
             <form method='POST' action=''>
@@ -107,7 +106,7 @@ function criar_alerta($mensagem, $tipo)
             </form>";
         }
 
-        // 📌 INSERIR ROTA NO BD
+        // INSERIR ROTA NO BD
         if (isset($_POST['ConfirmarAddRota'])) {
             $stmt = $conn->prepare("INSERT INTO Rota (Nome_Rota, Origem, Destino, Distancia) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("sssd", $_POST['nomeRota'], $_POST['origem'], $_POST['destino'], $_POST['distancia']);
@@ -117,7 +116,7 @@ function criar_alerta($mensagem, $tipo)
             }
         }
 
-        // 📌 LISTAR ROTAS
+        // LISTAR ROTAS
         $result = $conn->query("SELECT * FROM Rota");
         if ($result->num_rows > 0) {
             echo "<h1>Lista de Rotas</h1><div class='grid-container'>";
@@ -140,7 +139,7 @@ function criar_alerta($mensagem, $tipo)
             echo "<p>Não há rotas cadastradas.</p>";
         }
 
-        // 📌 FORMULÁRIO DE EDIÇÃO
+        // FORMULÁRIO DE EDIÇÃO
         if (isset($_POST['editarRota'])) {
             $idRota = $_POST['editarRota'];
             $rota = $conn->query("SELECT * FROM Rota WHERE Id_Rota = $idRota")->fetch_assoc();
@@ -159,7 +158,7 @@ function criar_alerta($mensagem, $tipo)
             </form>";
         }
 
-        // 📌 ATUALIZAR ROTA
+        // ATUALIZAR ROTA
         if (isset($_POST['ConfirmarEditarRota'])) {
             $stmt = $conn->prepare("UPDATE Rota SET Nome_Rota=?, Origem=?, Destino=?, Distancia=? WHERE Id_Rota=?");
             $stmt->bind_param("sssdi", $_POST['novoNomeRota'], $_POST['novaOrigem'], $_POST['novoDestino'], $_POST['novaDistancia'], $_POST['idRota']);
@@ -167,7 +166,7 @@ function criar_alerta($mensagem, $tipo)
             criar_alerta("Editou a rota ID " . $_POST['idRota'], "Editar Rota");
             header("Refresh: 2; url=gestao_rotas.php");
         }
-        // 📌 ELIMINAR ROTA
+        // ELIMINAR ROTA
         if (isset($_POST['eliminarRota'])) {
             $idRota = $_POST['eliminarRota'];
 
@@ -183,7 +182,7 @@ function criar_alerta($mensagem, $tipo)
             </form>';
         }
 
-        // 📌 PROCESSAR ELIMINAÇÃO
+        // PROCESSAR ELIMINAÇÃO
         if (isset($_POST['confirmarEliminarRota'])) {
             $idRota = $_POST['confirmarEliminarRota'];
 
@@ -210,7 +209,7 @@ function criar_alerta($mensagem, $tipo)
             document.getElementById('hora').textContent = hours + ":" + minutes + ":" + seconds;
         }
         setInterval(updateTime, 1000);
-        updateTime(); // Inicializa a hora ao carregar a página
+        updateTime(); 
     </script>
 
 </body>

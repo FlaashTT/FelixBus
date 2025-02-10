@@ -22,7 +22,7 @@ function pesquisarBilhetes($de = '', $para = '', $dataIda = '')
         FROM bilhetes b
         JOIN rota r ON b.id_rota = r.id_rota
         JOIN veiculos v ON b.id_veiculo = v.id_veiculo
-        WHERE b.estado_bilhete = 'Ativo'"; // Somente bilhetes ativos
+        WHERE b.estado_bilhete = 'Ativo'"; 
 
     // Adicionar filtros conforme a pesquisa
     if (!empty($de)) {
@@ -35,7 +35,6 @@ function pesquisarBilhetes($de = '', $para = '', $dataIda = '')
         $sql .= " AND b.data = '$dataIda'";  // Filtro de data
     }
 
-    // Executa a consulta
     $result = mysqli_query($conn, $sql);
     if (!$result) {
         die('Erro na consulta: ' . mysqli_error($conn));
@@ -49,7 +48,7 @@ function comprarBilhete($idBilhete, $numPassageiros)
 {
     global $conn, $userId, $msgCompra;
 
-    // Passo 1: Obter os detalhes do bilhete, como o preço, capacidade do veículo e lugares já comprados
+    // Obter os detalhes do bilhete, como o preço, capacidade do veículo e lugares já comprados
     $sql = "SELECT b.preco, b.id_veiculo, v.Capacidade, b.lugaresComprados 
             FROM bilhetes b 
             JOIN veiculos v ON b.id_veiculo = v.id_veiculo
@@ -67,7 +66,7 @@ function comprarBilhete($idBilhete, $numPassageiros)
 
     $bilhete = $result->fetch_assoc();
 
-    // Passo 2: Verificar se há lugares disponíveis (capacidade - lugares comprados)
+    // Verificar se há lugares disponíveis (capacidade - lugares comprados)
     $lugaresRestantes = $bilhete['Capacidade'] - $bilhete['lugaresComprados'];
 
     if ($lugaresRestantes < $numPassageiros) {
@@ -75,7 +74,7 @@ function comprarBilhete($idBilhete, $numPassageiros)
         return;
     }
 
-    // Passo 3: Verificar o saldo do utilizador
+    // Verificar o saldo do utilizador
     $sqlSaldo = "SELECT Saldo FROM utilizadores WHERE id = ?";
     $stmtSaldo = $conn->prepare($sqlSaldo);
     $stmtSaldo->bind_param("i", $userId);
@@ -90,14 +89,14 @@ function comprarBilhete($idBilhete, $numPassageiros)
     $user = $resultSaldo->fetch_assoc();
     $saldoAtual = $user['Saldo'];
 
-    // Passo 4: Verificar se o utilizador tem saldo suficiente
+    // Verificar se o utilizador tem saldo suficiente
     $totalPreco = $bilhete['preco'] * $numPassageiros;
     if ($saldoAtual < $totalPreco) {
         $msgCompra = "Saldo insuficiente para comprar os bilhetes.";
         return;
     }
 
-    // Passo 5: Subtrair o valor do bilhete do saldo
+    // Subtrair o valor do bilhete do saldo
     $novoSaldo = $saldoAtual - $totalPreco;
     $sqlUpdateSaldo = "UPDATE utilizadores SET Saldo = ? WHERE id = ?";
     $stmtUpdateSaldo = $conn->prepare($sqlUpdateSaldo);
@@ -108,7 +107,7 @@ function comprarBilhete($idBilhete, $numPassageiros)
         return;
     }
 
-    // Passo 6: Atualizar o número de lugares comprados
+    // Atualizar o número de lugares comprados
     $sqlUpdateBilhete = "UPDATE bilhetes 
                      SET lugaresComprados = IFNULL(lugaresComprados, 0) + ? 
                      WHERE id_bilhete = ?";
@@ -121,7 +120,7 @@ function comprarBilhete($idBilhete, $numPassageiros)
         return;
     }
 
-    // Passo 7: Registrar a compra na tabela compras_bilhetes
+    // Registrar a compra na tabela compras_bilhetes
     $sqlInsertCompra = "INSERT INTO compras_bilhetes (id_bilhete, id_utilizador, num_passageiros) 
                         VALUES (?, ?, ?)";
     $stmtInsertCompra = $conn->prepare($sqlInsertCompra);
@@ -249,7 +248,7 @@ $dataIda = isset($_POST['dataIda']) ? $_POST['dataIda'] : '';
             document.getElementById('hora').textContent = hours + ":" + minutes + ":" + seconds;
         }
         setInterval(updateTime, 1000);
-        updateTime(); // Inicializa a hora ao carregar a página
+        updateTime(); 
     </script>
 </body>
 

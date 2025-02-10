@@ -16,7 +16,7 @@ if (isset($_SESSION['utilizador'])) {
     $cargoUser = "Visitante";
 }
 
-// 📌 Função para criar alerta no sistema
+// Função para criar alerta no sistema
 function criar_alerta($mensagem, $tipo)
 {
     global $conn;
@@ -30,14 +30,14 @@ function criar_alerta($mensagem, $tipo)
 
     // Execute a query uma vez e verifique se a inserção foi bem-sucedida
     if ($stmt->execute()) {
-        return true;  // Retorna true se a inserção for bem-sucedida
+        return true;  
     } else {
-        return "Erro ao criar alerta: " . $stmt->error;  // Retorna a mensagem de erro, caso haja um erro na execução
+        return "Erro ao criar alerta: " . $stmt->error;  
     }
 }
 
 
-// 📌 Contar total de utilizadores para paginação
+// Contar total de utilizadores para paginação
 function totalUtilizadores()
 {
     global $conn;
@@ -47,7 +47,7 @@ function totalUtilizadores()
     return $row['total'];
 }
 
-// 📌 Obter utilizadores para exibição (apenas paginação, sem filtro)
+// Obter utilizadores para exibição (apenas paginação, sem filtro)
 function obterUtilizadoresPaginados($pagina = 1, $limite = 10)
 {
     global $conn;
@@ -56,7 +56,7 @@ function obterUtilizadoresPaginados($pagina = 1, $limite = 10)
     return mysqli_query($conn, $sql);
 }
 
-// 📌 Aplicar filtro APENAS quando há pesquisa
+// Aplicar filtro apenas quando há pesquisa
 function obterUtilizadoresComFiltro($filtro)
 {
     global $conn;
@@ -64,42 +64,42 @@ function obterUtilizadoresComFiltro($filtro)
     return mysqli_query($conn, $sql);
 }
 
-// 📌 PROCESSAR ELIMINAÇÃO
+// PROCESSAR ELIMINAÇÃO
 if (isset($_POST['confirmarEliminarUtilizador'])) {
     $idUtilizador = $_POST['confirmarEliminarUtilizador'];
 
-    // Atualizar o cargo para "Eliminado" em vez de excluir o utilizador
+    // Atualizar o cargo para "Eliminado" 
     $stmt = $conn->prepare("UPDATE utilizadores SET autenticacao = 'Eliminado' WHERE Id = ?");
     $stmt->bind_param("i", $idUtilizador);
 
     if ($stmt->execute()) {
         criar_alerta("O utilizador com ID: $idUtilizador foi marcado como 'Eliminado'", "Eliminar Utilizador");
-        // Agora você pode redirecionar sem problemas
-        header("Location: gestao_utilizadores.php"); // Redireciona imediatamente
-        exit();  // Garantir que o código seguinte não seja executado
+        
+        header("Location: gestao_utilizadores.php"); 
+        exit();  
     } else {
         echo "<p>Erro ao marcar o utilizador como 'Eliminado'.</p>";
     }
     
 }
 
-// 📌 Verifica se o botão "Limpar Filtro" foi pressionado
+// Verifica se o botão "Limpar Filtro" foi pressionado
 if (isset($_POST['reset_filtro'])) {
     $filtro = ''; // Limpa o filtro
-    header("Location: gestao_utilizadores.php"); // Redireciona para evitar reenvio do formulário
+    header("Location: gestao_utilizadores.php"); 
     exit();
 }
 
-// 📌 Recuperar filtro se existir
+// Recuperar filtro se existir
 $filtro = isset($_POST['filtro']) ? $_POST['filtro'] : '';
 
-// 📌 Paginação (independente do filtro)
+// Paginação (independente do filtro)
 $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $limite = 10;
 $totalUtilizadores = totalUtilizadores();
 $totalPaginas = ceil($totalUtilizadores / $limite);
 
-// 📌 Definir se estamos a mostrar filtrados ou paginados
+// Definir se estamos a mostrar filtrados ou paginados
 if (!empty($filtro)) {
     $utilizadores = obterUtilizadoresComFiltro($filtro);
 } else {
@@ -190,7 +190,7 @@ if (!empty($filtro)) {
                         echo "<td>" . date('d-m-Y H:i', strtotime($user['data_registro'])) . "</td>";
                         echo "<td>";
 
-                        // Se o utilizador está eliminado, não pode ser editado nem removido
+            // Se o utilizador está eliminado, não pode ser editado nem removido
             if ($user['Autenticacao'] === 'Eliminado') {
                 echo "<span class='status-inativo'>Conta Eliminada</span>";
             } 
@@ -232,7 +232,7 @@ if (!empty($filtro)) {
     
 
     <?php
-    // 📌 FORMULÁRIO DE EDIÇÃO DE UTILIZADOR
+    // FORMULÁRIO DE EDIÇÃO DE UTILIZADOR
     if (isset($_POST['editarUtilizador'])) {
         $idUtilizador = $_POST['editarUtilizador'];
         $utilizador = $conn->query("SELECT * FROM utilizadores WHERE Id = $idUtilizador")->fetch_assoc();
@@ -258,7 +258,7 @@ if (!empty($filtro)) {
     </form>";
     }
 
-    // 📌 ATUALIZAR UTILIZADOR
+    // ATUALIZAR UTILIZADOR
     if (isset($_POST['ConfirmarEditarUtilizador'])) {
         $idUtilizador = $_POST['idUtilizador'];
         $novoNome = $_POST['novoNome'];
@@ -270,7 +270,7 @@ if (!empty($filtro)) {
         header("Refresh: 2; url=gestao_utilizadores.php");
     }
 
-    // 📌 ELIMINAR UTILIZADOR
+    // ELIMINAR UTILIZADOR
     if (isset($_POST['eliminarUtilizador'])) {
         $idUtilizador = $_POST['eliminarUtilizador'];
     
@@ -296,7 +296,7 @@ if (!empty($filtro)) {
             document.getElementById('hora').textContent = hours + ":" + minutes + ":" + seconds;
         }
         setInterval(updateTime, 1000);
-        updateTime(); // Inicializa a hora ao carregar a página
+        updateTime(); 
     </script>
 </body>
 

@@ -140,7 +140,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['valor'])) {
         ?>
     </div>
 
-    <!-- Conteúdo Principal -->
     <div class="content">
 
         <h1>Levantar Saldo</h1>
@@ -173,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['valor'])) {
             document.getElementById('hora').textContent = hours + ":" + minutes + ":" + seconds;
         }
         setInterval(updateTime, 1000);
-        updateTime(); // Inicializa a hora ao carregar a página
+        updateTime(); 
     </script>
 
 </body>

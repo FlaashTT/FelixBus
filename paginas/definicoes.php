@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $msg = "<p class='error-msg'>Erro ao atualizar o perfil.</p>";
             }
 
-            $stmt->close(); // Fecha a consulta após execução
+            $stmt->close(); 
         }
     }
 }
