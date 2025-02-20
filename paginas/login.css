@@ -40,7 +40,7 @@ form {
     box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2); 
 }
 
-input[type="email"],
+input[type="text"]#nome,
 input[type="password"],
 input[type="submit"] {
     width: 100%;
@@ -53,7 +53,7 @@ input[type="submit"] {
     transition: all 0.3s ease;
 }
 
-input[type="email"]:focus,
+input[type="text"]#nome:focus,
 input[type="password"]:focus {
     border-color: #007bff;
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
