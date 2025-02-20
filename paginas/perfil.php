@@ -73,7 +73,7 @@ validar_acesso(['Funcionario', 'Admin', 'Cliente']);
             <!-- Informações do utilizador -->
             <?php
             $userId = $_SESSION['utilizador']['id'];
-            // Ajuste do SQL para utilizar a tabela de utilizadores do seu sistema
+            // Ajuste do SQL para utilizar a tabela de utilizadores do sistema
             $sql = "SELECT * FROM utilizadores WHERE id = '$userId' AND estado = 'Online'";
 
             if ($result = mysqli_query($conn, $sql)) {
