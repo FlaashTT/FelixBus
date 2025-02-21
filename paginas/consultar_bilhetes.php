@@ -16,6 +16,55 @@ if (isset($_SESSION['utilizador'])) {
 // Apenas utilizadores autenticados podem acessar
 validar_acesso(['Cliente', 'Funcionario', 'Admin']);
 
+// Definir variáveis de filtro
+$origemFiltro = isset($_GET['origem']) ? $_GET['origem'] : '';
+$destinoFiltro = isset($_GET['destino']) ? $_GET['destino'] : '';
+$dataFiltro = isset($_GET['data']) ? $_GET['data'] : '';
+
+// Paginação
+$registosPorPagina = 5;
+$pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+$offset = ($pagina - 1) * $registosPorPagina;
+
+// Consulta para contar total de registos
+$sqlTotal = "SELECT COUNT(*) as total FROM compras_bilhetes cb
+             INNER JOIN bilhetes b ON cb.id_bilhete = b.id_bilhete
+             INNER JOIN rota r ON b.id_rota = r.id_rota
+             WHERE cb.id_utilizador = '$userId'";
+
+if (!empty($origemFiltro)) {
+    $sqlTotal .= " AND r.Origem LIKE '%$origemFiltro%'";
+}
+if (!empty($destinoFiltro)) {
+    $sqlTotal .= " AND r.Destino LIKE '%$destinoFiltro%'";
+}
+if (!empty($dataFiltro)) {
+    $sqlTotal .= " AND b.data = '$dataFiltro'";
+}
+
+$resultTotal = $conn->query($sqlTotal);
+$totalRegistos = $resultTotal->fetch_assoc()['total'];
+$totalPaginas = ceil($totalRegistos / $registosPorPagina);
+
+// Consulta para buscar bilhetes com filtros e paginação
+$sql = "SELECT b.*, r.*, cb.*
+        FROM compras_bilhetes cb
+        INNER JOIN bilhetes b ON cb.id_bilhete = b.id_bilhete
+        INNER JOIN rota r ON b.id_rota = r.id_rota
+        WHERE cb.id_utilizador = '$userId'";
+
+if (!empty($origemFiltro)) {
+    $sql .= " AND r.Origem LIKE '%$origemFiltro%'";
+}
+if (!empty($destinoFiltro)) {
+    $sql .= " AND r.Destino LIKE '%$destinoFiltro%'";
+}
+if (!empty($dataFiltro)) {
+    $sql .= " AND b.data = '$dataFiltro'";
+}
+
+$sql .= " ORDER BY cb.data_compra DESC LIMIT $offset, $registosPorPagina";
+$result = $conn->query($sql);
 
 ?>
 
@@ -77,19 +126,6 @@ validar_acesso(['Cliente', 'Funcionario', 'Admin']);
         </form>
 
         <?php
-        // Consulta para buscar os bilhetes comprados pelo utilizador logado
-        $sql = "SELECT b.*, r.*, cb.*
-                FROM compras_bilhetes cb
-                INNER JOIN bilhetes b ON cb.id_bilhete = b.id_bilhete
-                INNER JOIN rota r ON b.id_rota = r.id_rota
-                WHERE cb.id_utilizador = ?
-                ORDER BY cb.data_compra DESC";
-
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $userId);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
         if ($result->num_rows > 0) {
             echo "<div class='grid-container'>";
             while ($row = $result->fetch_assoc()) {
@@ -195,7 +231,7 @@ validar_acesso(['Cliente', 'Funcionario', 'Admin']);
             }
         }
 
-        $stmt->close();
+        
         ?>
     </div>
 
