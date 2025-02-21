@@ -16,6 +16,7 @@ if (isset($_SESSION['utilizador'])) {
 // Apenas utilizadores autenticados podem acessar
 validar_acesso(['Cliente', 'Funcionario', 'Admin']);
 
+
 ?>
 
 <!DOCTYPE html>
@@ -66,6 +67,15 @@ validar_acesso(['Cliente', 'Funcionario', 'Admin']);
     <div class="content">
         <h1>Consulta de Bilhetes</h1>
 
+        <!-- Filtros -->
+        <form class="filtros-form" method="GET">
+            <input type="text" class="filtro" name="origem" placeholder="Origem" value="<?= htmlspecialchars($origemFiltro) ?>">
+            <input type="text" class="filtro" name="destino" placeholder="Destino" value="<?= htmlspecialchars($destinoFiltro) ?>">
+            <input type="date" class="filtro" name="data" value="<?= htmlspecialchars($dataFiltro) ?>">
+            <button class="filtrar-btn" type="submit">Filtrar</button>
+            <button class="limpar-btn" type="button" onclick="window.location.href='consultar_bilhetes.php'">Limpar Filtros</button>
+        </form>
+
         <?php
         // Consulta para buscar os bilhetes comprados pelo utilizador logado
         $sql = "SELECT b.*, r.*, cb.*
@@ -81,7 +91,7 @@ validar_acesso(['Cliente', 'Funcionario', 'Admin']);
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            echo "<div>";
+            echo "<div class='grid-container'>";
             while ($row = $result->fetch_assoc()) {
                 echo "<div class='card-Inicio'>";
                 echo "<p><strong>Bilhete ID:</strong> " . $row['id_bilhete'] . "</p>";
@@ -188,6 +198,19 @@ validar_acesso(['Cliente', 'Funcionario', 'Admin']);
         $stmt->close();
         ?>
     </div>
+
+    <!-- Paginação -->
+    <div class="paginacao">
+            <?php if ($pagina > 1) : ?>
+                <a href="?pagina=<?= $pagina - 1 ?>&origem=<?= $origemFiltro ?>&destino=<?= $destinoFiltro ?>&data=<?= $dataFiltro ?>">Anterior</a>
+            <?php endif; ?>
+
+            <span>Página <?= $pagina ?> de <?= $totalPaginas ?></span>
+
+            <?php if ($pagina < $totalPaginas) : ?>
+                <a href="?pagina=<?= $pagina + 1 ?>&origem=<?= $origemFiltro ?>&destino=<?= $destinoFiltro ?>&data=<?= $dataFiltro ?>">Próxima</a>
+            <?php endif; ?>
+        </div>
 
     <script>
         function updateTime() {

@@ -101,6 +101,50 @@ function comprarBilhete($idBilhete, $userId, $numLugares)
     $msgCompra = "Compra de $numLugares bilhete(s) efetuada com sucesso!";
 }
 
+// Parâmetros de filtro e paginação
+$origemFiltro = isset($_GET['origem']) ? $_GET['origem'] : '';
+$destinoFiltro = isset($_GET['destino']) ? $_GET['destino'] : '';
+$dataFiltro = isset($_GET['data']) ? $_GET['data'] : '';
+
+// Paginação
+$limite = 10;  // Quantidade de registros por página
+$pagina = isset($_GET['pagina']) ? max(1, intval($_GET['pagina'])) : 1;
+$offset = ($pagina - 1) * $limite;
+
+// Consulta para buscar rotas com filtro
+$sql = "SELECT b.id_bilhete, r.id_rota, r.Origem, r.Destino, b.data, b.hora, v.Capacidade, 
+               b.lugaresComprados, b.preco, b.data_criacao, 
+               (v.Capacidade - b.lugaresComprados) AS lugaresDisponiveis
+        FROM bilhetes b
+        INNER JOIN rota r ON b.id_rota = r.id_rota
+        INNER JOIN veiculos v ON b.id_veiculo = v.id_veiculo
+        WHERE b.estado_bilhete = 'Ativo'";
+
+// Aplicar filtros
+if (!empty($origemFiltro)) {
+    $sql .= " AND r.Origem LIKE '%$origemFiltro%'";
+}
+if (!empty($destinoFiltro)) {
+    $sql .= " AND r.Destino LIKE '%$destinoFiltro%'";
+}
+if (!empty($dataFiltro)) {
+    $sql .= " AND b.data = '$dataFiltro'";
+}
+
+// Contar total de resultados para paginação
+$sqlCount = str_replace("SELECT b.id_bilhete, r.id_rota, r.Origem, r.Destino, b.data, b.hora, v.Capacidade, 
+               b.lugaresComprados, b.preco, b.data_criacao, 
+               (v.Capacidade - b.lugaresComprados) AS lugaresDisponiveis", 
+               "SELECT COUNT(*) as total", 
+               $sql);
+
+$resultCount = mysqli_query($conn, $sqlCount);
+$totalRegistos = mysqli_fetch_assoc($resultCount)['total'];
+$totalPaginas = ceil($totalRegistos / $limite);
+
+// Aplicar limite e offset para a paginação
+$sql .= " ORDER BY b.data ASC LIMIT $limite OFFSET $offset";
+$result = mysqli_query($conn, $sql);
 
 ?>
 
@@ -153,19 +197,16 @@ function comprarBilhete($idBilhete, $userId, $numLugares)
         <div></div>
         <h1>Consultar Rotas</h1>
 
+        <!-- Filtros -->
+        <form class="filtros-form" method="GET">
+            <input type="text" class="filtro" name="origem" placeholder="Origem" value="<?= htmlspecialchars($origemFiltro) ?>">
+            <input type="text" class="filtro" name="destino" placeholder="Destino" value="<?= htmlspecialchars($destinoFiltro) ?>">
+            <input type="date" class="filtro" name="data" value="<?= htmlspecialchars($dataFiltro) ?>">
+            <button class="filtrar-btn" type="submit">Filtrar</button>
+            <button class="limpar-btn" type="button" onclick="window.location.href='rotas.php'">Limpar Filtros</button>
+        </form>
+
         <?php
-        // Consulta para buscar todas as rotas disponíveis
-        $sql = "SELECT b.id_bilhete, r.id_rota, r.Origem, r.Destino, b.data, b.hora, v.Capacidade, b.lugaresComprados, b.preco, b.data_criacao,
-        (v.Capacidade - b.lugaresComprados) AS lugaresDisponiveis
-        FROM bilhetes b
-        INNER JOIN rota r ON b.id_rota = r.id_rota
-        INNER JOIN veiculos v ON b.id_veiculo = v.id_veiculo
-        WHERE b.estado_bilhete = 'Ativo'
-        ORDER BY b.data ASC";
-
-        $result = mysqli_query($conn, $sql);
-
-
         if (mysqli_num_rows($result) > 0) {
             echo "<table class='utilizadores-tabela'>";
             echo "<tr>
@@ -178,7 +219,7 @@ function comprarBilhete($idBilhete, $userId, $numLugares)
                 <th>Lugares Disponíveis</th>
                 <th>Ação</th>
             </tr>";
-        
+
             while ($row = mysqli_fetch_assoc($result)) {
                 echo "<tr>";
                 echo "<td>" . $row['id_rota'] . "</td>";
@@ -187,8 +228,8 @@ function comprarBilhete($idBilhete, $userId, $numLugares)
                 echo "<td>" . date('d-m-Y', strtotime($row['data'])) . "</td>";
                 echo "<td>" . $row['hora'] . "</td>";
                 echo "<td>" . number_format($row['preco'], 2, ',', '.') . "€</td>";
-                echo "<td>" . max(0, $row['lugaresDisponiveis']) . "</td>"; // Garante que não exibe valores negativos
-        
+                echo "<td>" . max(0, $row['lugaresDisponiveis']) . "</td>";
+
                 echo "<td>
                         <form action='rotas.php' method='POST'>
                             <input type='hidden' name='idBilhete' value='" . $row['id_bilhete'] . "'>
@@ -203,7 +244,6 @@ function comprarBilhete($idBilhete, $userId, $numLugares)
         } else {
             echo "<p>Não existem rotas disponíveis no momento.</p>";
         }
-        
 
         if (isset($_POST['verBilhete'])) {
             $idBilhete = $_POST['idBilhete'];
@@ -267,6 +307,18 @@ function comprarBilhete($idBilhete, $userId, $numLugares)
         
         ?>
 
+        <!-- Paginação -->
+        <div class="paginacao">
+            <?php if ($pagina > 1) : ?>
+                <a href="?pagina=<?= $pagina - 1 ?>&origem=<?= $origemFiltro ?>&destino=<?= $destinoFiltro ?>&data=<?= $dataFiltro ?>">Anterior</a>
+            <?php endif; ?>
+
+            <span>Página <?= $pagina ?> de <?= $totalPaginas ?></span>
+
+            <?php if ($pagina < $totalPaginas) : ?>
+                <a href="?pagina=<?= $pagina + 1 ?>&origem=<?= $origemFiltro ?>&destino=<?= $destinoFiltro ?>&data=<?= $dataFiltro ?>">Próxima</a>
+            <?php endif; ?>
+        </div>
 
     </div>
 

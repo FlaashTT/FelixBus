@@ -743,3 +743,9 @@ input.filtro {
 .cancel-btn:hover {
     background-color: #cc0000; /* Cor mais escura quando o botão for sobrevoado */
 }
+
+.filtros-form input {
+    width: 120px;
+    padding: 5px;
+    margin-right: 5px;
+}
