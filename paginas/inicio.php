@@ -37,6 +37,8 @@ if (isset($_SESSION['utilizador'])) {
         <?php
         // Apenas utilizadores autenticados veem "Perfil"
         if ($cargoUser !== "Visitante") {
+            echo '<a href="rotas.php">Rotas</a>';
+            echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
             echo '<a href="perfil.php">Perfil</a>';
         }
 

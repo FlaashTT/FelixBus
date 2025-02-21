@@ -206,7 +206,7 @@ $stmt->close();
                 <input class='texto-Adicionar' type="email" name="email" value="<?php echo $user['Email']; ?>" required>
 
                 <label for="senha_antiga">Senha Atual:</label>
-                <input class='texto-Adicionar' type="password" name="senha_antiga">
+                <input class='texto-Adicionar' type="password" name="senha_antiga" required>
 
                 <label for="nova_senha">Nova Senha (opcional):</label>
                 <input class='texto-Adicionar' type="password" name="nova_senha">
