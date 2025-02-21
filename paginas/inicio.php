@@ -33,7 +33,7 @@ if (isset($_SESSION['utilizador'])) {
     <!-- Sidebar -->
     <div class="sidebar">
         <a href="inicio.php">Início</a>
-
+        
         <?php
         // Apenas utilizadores autenticados veem "Perfil"
         if ($cargoUser !== "Visitante") {
