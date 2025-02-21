@@ -14,7 +14,12 @@ if (isset($_SESSION['utilizador'])) {
 }
 
 // Apenas Funcionários, Administradores e Clientes podem acessar esta página
-validar_acesso(['Funcionario', 'Admin', 'Cliente']);
+$acessosPermitidos = ['Cliente', 'Funcionario', 'Admin'];
+if (!in_array($cargoUser, $acessosPermitidos)) {
+    echo "<script>alert('Acesso negado! Tem de iniciar sessão para continuar.'); 
+    window.location.href = 'login.php';</script>";
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -43,6 +48,7 @@ validar_acesso(['Funcionario', 'Admin', 'Cliente']);
         if ($cargoUser !== "Visitante") {
             echo '<a href="rotas.php">Rotas</a>';
             echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
+            echo' <a href="alertas.php">Alertas</a>';
             echo '<a href="perfil.php">Perfil</a>';
         }
 

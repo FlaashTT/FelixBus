@@ -111,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['valor'])) {
     <!-- Sidebar -->
     <div class="sidebar">
         <a href="inicio.php">Início</a>
+        <a href="alertas.php">Alertas</a>
         <?php
         if ($cargoUser !== "Visitante") {
             echo '<a href="perfil.php">Perfil</a>';

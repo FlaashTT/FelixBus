@@ -1,1 +1,1 @@
-DROP DATABASE felixbus-recurso;
+DROP DATABASE felixbusRecurso;

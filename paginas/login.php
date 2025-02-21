@@ -11,9 +11,8 @@
 <body>
   <form action="login.php" method="POST">
     <img src="../paginas/Felixbus.png" alt="Logo" id="LOGO">
-    <input type="text" id="nome" name="email_Nome" placeholder="Introduzir Email ou Nome" required />
+    <input type="text" id="nome" name="email_Nome" placeholder="Introduzir Nome" required />
     <input type="password" id="password" name="password" placeholder="Introduzir Password" required />
-    <a href="../paginas/" id="esqueci-senha-login">Esqueci da Password?</a>
     <input type="submit" name="login" value="Login">
     <a href="registro.php" id="esqueci-registrar-conta" ><b>Não tenho Conta!</b></a>
     <a href="inicio.php" id="pagina-inicial"><b>Pagina Inicial</b></a>

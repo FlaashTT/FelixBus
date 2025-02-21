@@ -1,6 +1,6 @@
 <?php
 
-$database = 'felixbus-recurso';
+$database = 'felixbusRecurso';
 $dbhost = 'localhost';
 $dbuser = 'root';
 $dbpass = '';

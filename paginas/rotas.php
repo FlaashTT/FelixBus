@@ -12,9 +12,13 @@ if (isset($_SESSION['utilizador'])) {
     // Se não estiver autenticado, assume como visitante
     $cargoUser = "Visitante";
 }
-
-// Apenas utilizadores autenticados podem acessar
-validar_acesso(['Cliente', 'Funcionario', 'Admin']);
+// Verifica se o utilizador tem acesso permitido
+$acessosPermitidos = ['Cliente', 'Funcionario', 'Admin'];
+if (!in_array($cargoUser, $acessosPermitidos)) {
+    echo "<script>alert('Acesso negado! Tem de iniciar sessão para continuar.'); 
+    window.location.href = 'login.php';</script>";
+    exit();
+}
 
 function comprarBilhete($idBilhete, $userId, $numLugares)
 {
@@ -173,6 +177,7 @@ $result = mysqli_query($conn, $sql);
         if ($cargoUser !== "Visitante") {
             echo '<a href="rotas.php">Rotas</a>';
             echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
+            echo' <a href="alertas.php">Alertas</a>';
             echo '<a href="perfil.php">Perfil</a>';
         }
         if ($cargoUser === 'Funcionario' || $cargoUser === 'Admin') {
@@ -194,7 +199,6 @@ $result = mysqli_query($conn, $sql);
     </div>
 
     <div class="content">
-        <div></div>
         <h1>Consultar Rotas</h1>
 
         <!-- Filtros -->

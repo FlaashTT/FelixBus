@@ -14,7 +14,12 @@ if (isset($_SESSION['utilizador'])) {
 }
 
 // Apenas utilizadores autenticados podem acessar
-validar_acesso(['Cliente', 'Funcionario', 'Admin']);
+$acessosPermitidos = ['Cliente', 'Funcionario', 'Admin'];
+if (!in_array($cargoUser, $acessosPermitidos)) {
+    echo "<script>alert('Acesso negado! Tem de iniciar sessão para continuar.'); 
+    window.location.href = 'login.php';</script>";
+    exit();
+}
 
 // Definir variáveis de filtro
 $origemFiltro = isset($_GET['origem']) ? $_GET['origem'] : '';
@@ -45,6 +50,7 @@ if (!empty($dataFiltro)) {
 $resultTotal = $conn->query($sqlTotal);
 $totalRegistos = $resultTotal->fetch_assoc()['total'];
 $totalPaginas = ceil($totalRegistos / $registosPorPagina);
+//funçao para arredondar valores
 
 // Consulta para buscar bilhetes com filtros e paginação
 $sql = "SELECT b.*, r.*, cb.*
@@ -93,6 +99,7 @@ $result = $conn->query($sql);
         if ($cargoUser !== "Visitante") {
             echo '<a href="rotas.php">Rotas</a>';
             echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
+            echo' <a href="alertas.php">Alertas</a>';
             echo '<a href="perfil.php">Perfil</a>';
         }
         if ($cargoUser === 'Funcionario' || $cargoUser === 'Admin') {
