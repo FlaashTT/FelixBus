@@ -21,6 +21,16 @@ if (!in_array($cargoUser, $acessosPermitidos)) {
     exit();
 }
 
+function criar_alerta($mensagem, $tipo, $idRemetente)
+{
+    global $conn;
+    $dataAtual = date('Y-m-d H:i:s');
+
+    $stmt = $conn->prepare("INSERT INTO alertas (Texto_Alerta, Data_Emissao, Id_Remetente, Tipo_Alerta) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssis", $mensagem, $dataAtual, $idRemetente, $tipo);
+    $stmt->execute();
+}
+
 // Definir variáveis de filtro
 $origemFiltro = isset($_GET['origem']) ? $_GET['origem'] : '';
 $destinoFiltro = isset($_GET['destino']) ? $_GET['destino'] : '';
@@ -84,6 +94,20 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="../paginas/menu.css">
 </head>
 
+<style>
+    .success-msg {
+            color: green;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .error-msg {
+            color: red;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+</style>
+
 <body>
 
     <!-- Navbar -->
@@ -99,7 +123,7 @@ $result = $conn->query($sql);
         if ($cargoUser !== "Visitante") {
             echo '<a href="rotas.php">Rotas</a>';
             echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
-            echo' <a href="alertas.php">Alertas</a>';
+            echo ' <a href="alertas.php">Alertas</a>';
             echo '<a href="perfil.php">Perfil</a>';
         }
         if ($cargoUser === 'Funcionario' || $cargoUser === 'Admin') {
@@ -160,7 +184,7 @@ $result = $conn->query($sql);
             }
             echo "</div>";
         } else {
-            echo "<p>Você ainda não comprou bilhetes.</p>";
+            echo "<p>Não existem bilhetes comprados no momento.</p>";
         }
 
         // Eliminar bilhete
@@ -181,79 +205,83 @@ $result = $conn->query($sql);
             $idBilhete = $_POST['reembolsarBilhete'];
             $valor = $_POST['valorAReceber'];  // Este valor vem do preço do bilhete
 
-            // Obter o número de lugares comprados e o valor gasto da tabela bilhetes
-            $sqlCompra = "SELECT lugaresComprados, preco 
-                          FROM bilhetes 
-                          WHERE id_bilhete = ?";
+            // Verificar primeiro quantos lugares o utilizador comprou na tabela bilhetes
+            $sqlVerificaCompra = "SELECT b.lugaresComprados, b.preco, r.Origem, r.Destino 
+                                    FROM bilhetes b
+                                    INNER JOIN rota r ON b.id_rota = r.id_rota
+                                    WHERE b.id_bilhete = ?";
 
-            $stmtCompra = $conn->prepare($sqlCompra);
-            $stmtCompra->bind_param("i", $idBilhete);
-            $stmtCompra->execute();
-            $resultCompra = $stmtCompra->get_result();
+            $stmtVerifica = $conn->prepare($sqlVerificaCompra);
+            $stmtVerifica->bind_param("i", $idBilhete);
+            $stmtVerifica->execute();
+            $resultVerifica = $stmtVerifica->get_result();
 
-            if ($resultCompra->num_rows > 0) {
-                $compra = $resultCompra->fetch_assoc();
-                $quantidadeLugares = $compra['lugaresComprados'];
-                $precoUnitario = $compra['preco'];
+            if ($resultVerifica->num_rows > 0) {
+                $compra = $resultVerifica->fetch_assoc();
+                $lugaresComprados = $compra['lugaresComprados']; // Lugares comprados na tabela bilhetes
+                $precoUnitario = $compra['preco']; // Preço de cada bilhete
+                $origem = $compra['Origem'];
+                $destino = $compra['Destino'];
 
-                // Calcular o valor total do reembolso
-                $totalReembolso = $precoUnitario * $quantidadeLugares;
+                // Calcular total a reembolsar
+                $totalReembolso = $lugaresComprados * $precoUnitario;
 
-                // Devolver o valor do bilhete ao saldo do utilizador
+                // Devolver o valor ao saldo do utilizador
                 $sqlSaldo = "UPDATE utilizadores SET Saldo = Saldo + ? WHERE id = ?";
                 $stmtSaldo = $conn->prepare($sqlSaldo);
                 $stmtSaldo->bind_param("di", $totalReembolso, $userId);
 
                 if ($stmtSaldo->execute()) {
-                    // Liberar o lugar no bilhete
-                    $sqlUpdateBilhete = "UPDATE bilhetes 
-                     SET lugaresComprados = lugaresComprados - ? 
-                     WHERE id_bilhete = ? AND lugaresComprados >= ?";
+                    // Atualizar lugares disponíveis no bilhete
+                    $sqlUpdateBilhete = "UPDATE bilhetes SET lugaresComprados = lugaresComprados - ? WHERE id_bilhete = ? AND lugaresComprados >= ?";
                     $stmtUpdateBilhete = $conn->prepare($sqlUpdateBilhete);
-                    $stmtUpdateBilhete->bind_param("iii", $quantidadeLugares, $idBilhete, $quantidadeLugares);
-                    $stmtUpdateBilhete->execute();
-
+                    $stmtUpdateBilhete->bind_param("iii", $lugaresComprados, $idBilhete, $lugaresComprados);
 
                     if ($stmtUpdateBilhete->execute()) {
-                        // Remover a transação de compra da tabela de compras
+                        // Eliminar a compra na tabela compras_bilhetes
                         $sqlDeleteCompra = "DELETE FROM compras_bilhetes WHERE id_bilhete = ? AND id_utilizador = ?";
                         $stmtDeleteCompra = $conn->prepare($sqlDeleteCompra);
                         $stmtDeleteCompra->bind_param("ii", $idBilhete, $userId);
 
                         if ($stmtDeleteCompra->execute()) {
-                            // Confirmar sucesso
-                            echo "Bilhete reembolsado com sucesso!";
+
+                            $mensagemCompra = "<p class='success-msg'>Fez Reembolso de Origem: $origem, Destino: $destino.</p>";
+                            echo $mensagemCompra;
+
+                            // Criar alerta do reembolso
+                            criar_alerta("Reembolsou $lugaresComprados bilhete(s) de $origem para $destino.", "Reembolso", $userId);
+                            
                             header("Refresh: 2; url=consultar_bilhetes.php");
                         } else {
                             echo "Erro ao remover a compra do bilhete.";
                         }
                     } else {
-                        echo "Erro ao liberar o lugar no bilhete.";
+                        echo "Erro ao atualizar os lugares do bilhete.";
                     }
                 } else {
-                    echo "Erro ao atualizar o saldo.";
+                    echo "Erro ao creditar o saldo do utilizador.";
                 }
             } else {
-                echo "Erro ao obter detalhes da compra.";
+                echo "Erro: Não foi encontrada uma compra válida para este bilhete.";
             }
         }
 
-        
+
         ?>
     </div>
 
     <!-- Paginação -->
     <div class="paginacao">
-            <?php if ($pagina > 1) : ?>
-                <a href="?pagina=<?= $pagina - 1 ?>&origem=<?= $origemFiltro ?>&destino=<?= $destinoFiltro ?>&data=<?= $dataFiltro ?>">Anterior</a>
-            <?php endif; ?>
+        <?php if ($pagina > 1) : ?>
+            <a href="?pagina=<?= $pagina - 1 ?>&origem=<?= $origemFiltro ?>&destino=<?= $destinoFiltro ?>&data=<?= $dataFiltro ?>">Anterior</a>
+        <?php endif; ?>
 
-            <span>Página <?= $pagina ?> de <?= $totalPaginas ?></span>
+        <span>Página <?= $pagina ?> de <?= $totalPaginas ?></span>
 
-            <?php if ($pagina < $totalPaginas) : ?>
-                <a href="?pagina=<?= $pagina + 1 ?>&origem=<?= $origemFiltro ?>&destino=<?= $destinoFiltro ?>&data=<?= $dataFiltro ?>">Próxima</a>
-            <?php endif; ?>
-        </div>
+        <?php if ($pagina < $totalPaginas) : ?>
+            <a href="?pagina=<?= $pagina + 1 ?>&origem=<?= $origemFiltro ?>&destino=<?= $destinoFiltro ?>&data=<?= $dataFiltro ?>">Próxima</a>
+        <?php endif; ?>
+    </div>
 
     <script>
         function updateTime() {

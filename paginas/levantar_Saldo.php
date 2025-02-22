@@ -34,12 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['valor'])) {
         $stmt->bind_param("di", $valor, $userId);
 
         if ($stmt->execute()) {
-            echo "<p>Levamento realizado com sucesso!</p>";
+            $msg= "<p class='success-msg'>Levamento realizado com sucesso!</p>";
         } else {
-            echo "<p>Erro ao levantar dinheiro.</p>";
+            $msg= "<p class='error-msg'>Erro ao levantar dinheiro.</p>";
         }
     } else {
-        echo "<p>Saldo insuficiente ou valor inválido.</p>";
+        $msg= "<p class='error-msg'>Saldo insuficiente ou valor inválido.</p>";
     }
 }
 ?>
@@ -122,6 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['valor'])) {
         if ($cargoUser !== "Visitante") {
             echo '<a href="rotas.php">Rotas</a>';
             echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
+            echo '<a href="alertas.php">Alertas</a>';
             echo '<a href="perfil.php">Perfil</a>';
         }
         if ($cargoUser === 'Funcionario' || $cargoUser === 'Admin') {

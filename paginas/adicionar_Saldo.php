@@ -111,9 +111,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['valor'])) {
     <!-- Sidebar -->
     <div class="sidebar">
         <a href="inicio.php">Início</a>
-        <a href="alertas.php">Alertas</a>
+
         <?php
         if ($cargoUser !== "Visitante") {
+            echo '<a href="rotas.php">Rotas</a>';
+            echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
+            echo '<a href="alertas.php">Alertas</a>';
             echo '<a href="perfil.php">Perfil</a>';
         }
         if ($cargoUser === 'Funcionario' || $cargoUser === 'Admin') {

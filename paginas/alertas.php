@@ -3,6 +3,8 @@ session_start();
 include("../basedados/basedados.h");
 include("../paginas/validacao.php");
 
+
+
 // Verifica se o utilizador está autenticado
 if (isset($_SESSION['utilizador'])) {
     $utilizador = $_SESSION['utilizador'];
@@ -24,11 +26,11 @@ if (!in_array($cargoUser, $acessosPermitidos)) {
 $origemFiltro = $_GET['tipo'] ?? '';
 
 // Consulta para buscar alertas com filtro
-$sql = "SELECT * FROM alertas WHERE Tipo_Alerta LIKE '%Promoção%'";
+$sql = "SELECT * FROM alertas WHERE Tipo_Alerta IN ('Promoção', 'Compra', 'Reembolso')";
 
 // Aplicar filtros
-if (!empty($origemFiltro)) {
-    $sql .= " AND Tipo_Alerta LIKE '%" . mysqli_real_escape_string($conn, $origemFiltro) . "%'";
+if (!empty($tipoFiltro)) {
+    $sql .= " WHERE Tipo_Alerta = '" . mysqli_real_escape_string($conn, $tipoFiltro) . "'";
 }
 
 
@@ -134,6 +136,19 @@ $result = mysqli_query($conn, $sql);
             <a href="?pagina=<?= $pagina + 1 ?>&origem=<?= urlencode($origemFiltro) ?>&destino=<?= urlencode($destinoFiltro) ?>&data=<?= urlencode($dataFiltro) ?>">Próxima</a>
         <?php endif; ?>
     </div>
+
+    <script>
+        // Exibir a hora dinâmica na navbar
+        function updateTime() {
+            const date = new Date();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            document.getElementById('hora').textContent = hours + ":" + minutes + ":" + seconds;
+        }
+        setInterval(updateTime, 1000);
+        updateTime(); // Inicializa a hora ao carregar a página
+    </script>
 </body>
 
 </html>

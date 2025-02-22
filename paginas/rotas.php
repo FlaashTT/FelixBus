@@ -21,6 +21,16 @@ if (!in_array($cargoUser, $acessosPermitidos)) {
     exit();
 }
 
+function criar_alerta($mensagem, $tipo, $idRemetente)
+{
+    global $conn;
+    $dataAtual = date('Y-m-d H:i:s');
+
+    $stmt = $conn->prepare("INSERT INTO alertas (Texto_Alerta, Data_Emissao, Id_Remetente, Tipo_Alerta) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("ssis", $mensagem, $dataAtual, $idRemetente, $tipo);
+    $stmt->execute();
+}
+
 function comprarBilhete($idBilhete, $userId, $numLugares)
 {
     global $conn, $msgCompra;
@@ -137,11 +147,13 @@ if (!empty($dataFiltro)) {
 }
 
 // Contar total de resultados para paginação
-$sqlCount = str_replace("SELECT b.id_bilhete, r.id_rota, r.Origem, r.Destino, b.data, b.hora, v.Capacidade, 
+$sqlCount = str_replace(
+    "SELECT b.id_bilhete, r.id_rota, r.Origem, r.Destino, b.data, b.hora, v.Capacidade, 
                b.lugaresComprados, b.preco, b.data_criacao, 
-               (v.Capacidade - b.lugaresComprados) AS lugaresDisponiveis", 
-               "SELECT COUNT(*) as total", 
-               $sql);
+               (v.Capacidade - b.lugaresComprados) AS lugaresDisponiveis",
+    "SELECT COUNT(*) as total",
+    $sql
+);
 
 $resultCount = mysqli_query($conn, $sqlCount);
 $totalRegistos = mysqli_fetch_assoc($resultCount)['total'];
@@ -163,6 +175,20 @@ $result = mysqli_query($conn, $sql);
     <link rel="stylesheet" href="../paginas/menu.css">
 </head>
 
+<style>
+    .success-msg {
+            color: green;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .error-msg {
+            color: red;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+</style>
+
 <body>
 
     <!-- Navbar -->
@@ -178,7 +204,7 @@ $result = mysqli_query($conn, $sql);
         if ($cargoUser !== "Visitante") {
             echo '<a href="rotas.php">Rotas</a>';
             echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
-            echo' <a href="alertas.php">Alertas</a>';
+            echo ' <a href="alertas.php">Alertas</a>';
             echo '<a href="perfil.php">Perfil</a>';
         }
         if ($cargoUser === 'Funcionario' || $cargoUser === 'Admin') {
@@ -210,6 +236,7 @@ $result = mysqli_query($conn, $sql);
             <button class="filtrar-btn" type="submit">Filtrar</button>
             <button class="limpar-btn" type="button" onclick="window.location.href='rotas.php'">Limpar Filtros</button>
         </form>
+
 
         <?php
         if (mysqli_num_rows($result) > 0) {
@@ -252,25 +279,25 @@ $result = mysqli_query($conn, $sql);
 
         if (isset($_POST['verBilhete'])) {
             $idBilhete = $_POST['idBilhete'];
-        
+
             // Consulta para obter os detalhes do bilhete selecionado
             $sqlDetalhes = "SELECT b.id_bilhete, r.Origem, r.Destino, b.data, b.hora, b.preco, v.Capacidade, b.lugaresComprados
                             FROM bilhetes b
                             INNER JOIN rota r ON b.id_rota = r.id_rota
                             INNER JOIN veiculos v ON b.id_veiculo = v.id_veiculo
                             WHERE b.id_bilhete = ?";
-        
+
             $stmtDetalhes = $conn->prepare($sqlDetalhes);
             $stmtDetalhes->bind_param("i", $idBilhete);
             $stmtDetalhes->execute();
             $resultDetalhes = $stmtDetalhes->get_result();
-        
+
             if ($resultDetalhes->num_rows > 0) {
                 $bilhete = $resultDetalhes->fetch_assoc();
-                
+
                 // Atualiza os lugares disponíveis após a compra
-                $lugaresDisponiveis = max(0, $bilhete['Capacidade'] - $bilhete['lugaresComprados']); 
-        
+                $lugaresDisponiveis = max(0, $bilhete['Capacidade'] - $bilhete['lugaresComprados']);
+
                 echo "
                 <div class='card'>
                     <h2>Detalhes do Bilhete</h2>
@@ -296,21 +323,44 @@ $result = mysqli_query($conn, $sql);
                 echo "<p>Erro ao carregar os detalhes do bilhete.</p>";
             }
         }
-        
-        
+
 
         if (isset($_POST['comprarbilhete'])) {
             $idBilhete = $_POST['idBilhete'];
             $numLugares = intval($_POST['numLugares']);
-        
+
+            // Buscar dados da rota
+            $sqlRota = "SELECT r.Origem, r.Destino FROM bilhetes b INNER JOIN rota r ON b.id_rota = r.id_rota WHERE b.id_bilhete = ?";
+            $stmtRota = $conn->prepare($sqlRota);
+            $stmtRota->bind_param("i", $idBilhete);
+            $stmtRota->execute();
+            $resultRota = $stmtRota->get_result();
+
+            if ($resultRota->num_rows > 0) {
+                $rota = $resultRota->fetch_assoc();
+                $origem = $rota['Origem'];
+                $destino = $rota['Destino'];
+            } else {
+                $origem = "Desconhecido";
+                $destino = "Desconhecido";
+            }
+
             comprarBilhete($idBilhete, $userId, $numLugares);
-        
+
             if (!empty($msgCompra)) {
-                echo "<p>$msgCompra</p>";
+                $mensagemCompra = "<p class='success-msg'>$msgCompra - Origem: $origem, Destino: $destino.</p>";
+                echo $mensagemCompra;
+                criar_alerta("Comprou $numLugares bilhete(s) de $origem para $destino.", "Compra", $userId);
+                header("Refresh: 2; url=rotas.php");
+            } else {
+                $mensagemCompra = "<p class='error-msg'>Erro ao processar a compra.</p>";
             }
         }
-        
+
+
         ?>
+
+
 
         <!-- Paginação -->
         <div class="paginacao">

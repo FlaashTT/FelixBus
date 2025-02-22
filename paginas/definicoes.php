@@ -199,7 +199,9 @@ $stmt->close();
 
             <?php
             // Exibe a mensagem de sucesso ou erro
-            echo $msg;
+            if (isset($msg)) {
+                echo $msg;
+            }
             ?>
 
             <form method="POST">
