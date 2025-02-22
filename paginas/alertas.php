@@ -3,13 +3,6 @@ session_start();
 include("../basedados/basedados.h");
 include("../paginas/validacao.php");
 
-$acessosPermitidos = ['Cliente', 'Funcionario', 'Admin'];
-if (!in_array($cargoUser, $acessosPermitidos)) {
-    echo "<script>alert('Acesso negado! Tem de iniciar sessão para continuar.'); 
-    window.location.href = 'login.php';</script>";
-    exit();
-}
-
 // Verifica se o utilizador está autenticado
 if (isset($_SESSION['utilizador'])) {
     $utilizador = $_SESSION['utilizador'];
@@ -18,6 +11,13 @@ if (isset($_SESSION['utilizador'])) {
 } else {
     // Se não estiver autenticado, assume como visitante
     $cargoUser = "Visitante";
+}
+
+$acessosPermitidos = ['Cliente', 'Funcionario', 'Admin'];
+if (!in_array($cargoUser, $acessosPermitidos)) {
+    echo "<script>alert('Acesso negado! Tem de iniciar sessão para continuar.'); 
+    window.location.href = 'login.php';</script>";
+    exit();
 }
 
 // Inicializa variáveis de filtro para evitar warnings
@@ -100,8 +100,10 @@ $result = mysqli_query($conn, $sql);
         <a href="inicio.php">Início</a>
         <?php
         if ($cargoUser !== "Visitante") {
-            echo '<a href="perfil.php">Perfil</a>';
+            echo '<a href="rotas.php">Rotas</a>';
+            echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
             echo '<a href="alertas.php">Alertas</a>';
+            echo '<a href="perfil.php">Perfil</a>';
         }
         if ($cargoUser === 'Funcionario' || $cargoUser === 'Admin') {
             echo '<a href="gestao_veiculos.php">Gestão Veículos</a>';
@@ -114,8 +116,6 @@ $result = mysqli_query($conn, $sql);
             echo '<a href="gestao_alertas.php">Gestão de Alertas</a>';
         }
         if ($cargoUser !== "Visitante") {
-            echo '<a href="rotas.php">Rotas</a>';
-            echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
             echo '<a href="logout.php" class="logout">Sair</a>';
         } else {
             echo '<a href="login.php" class="login-btn">Iniciar Sessão</a>';

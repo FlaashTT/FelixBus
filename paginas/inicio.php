@@ -11,6 +11,8 @@ if (isset($_SESSION['utilizador'])) {
     // Se não estiver autenticado, assume como visitante
     $cargoUser = "Visitante";
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -33,14 +35,13 @@ if (isset($_SESSION['utilizador'])) {
     <!-- Sidebar -->
     <div class="sidebar">
         <a href="inicio.php">Início</a>
-        <a href="alertas.php">Alertas</a>
-        
         
         <?php
         // Apenas utilizadores autenticados veem "Perfil"
         if ($cargoUser !== "Visitante") {
             echo '<a href="rotas.php">Rotas</a>';
             echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
+            echo' <a href="alertas.php">Alertas</a>';
             echo '<a href="perfil.php">Perfil</a>';
         }
 
@@ -62,9 +63,6 @@ if (isset($_SESSION['utilizador'])) {
         if ($cargoUser !== "Visitante") {
             echo '<a href="logout.php" class="logout">Sair</a>';
         } else {
-            echo '<a href="rotas.php">Rotas</a>';
-            echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
-            echo '<a href="perfil.php">Perfil</a>';
             echo '<a href="login.php" class="login-btn">Iniciar Sessão</a>';
         }
         ?>

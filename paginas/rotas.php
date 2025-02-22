@@ -12,6 +12,7 @@ if (isset($_SESSION['utilizador'])) {
     // Se não estiver autenticado, assume como visitante
     $cargoUser = "Visitante";
 }
+
 // Verifica se o utilizador tem acesso permitido
 $acessosPermitidos = ['Cliente', 'Funcionario', 'Admin'];
 if (!in_array($cargoUser, $acessosPermitidos)) {
