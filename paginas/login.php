@@ -11,7 +11,7 @@
 <body>
   <form action="login.php" method="POST">
     <img src="../paginas/Felixbus.png" alt="Logo" id="LOGO">
-    <input type="text" id="nome" name="email_Nome" placeholder="Introduzir Nome" required />
+    <input type="text" id="nome" name="Nome" placeholder="Introduzir Nome" required />
     <input type="password" id="password" name="password" placeholder="Introduzir Password" required />
     <input type="submit" name="login" value="Login">
     <a href="registro.php" id="esqueci-registrar-conta" ><b>Não tenho Conta!</b></a>
@@ -28,13 +28,13 @@ include("../basedados/basedados.h");
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (!empty($_POST["email_Nome"]) && !empty($_POST["password"])) {
-        $inputLogin = $_POST['email_Nome']; // Pode ser Email ou Nome
+    if (!empty($_POST["Nome"]) && !empty($_POST["password"])) {
+        $inputLogin = $_POST['Nome']; // Com Nome
         $password = hash('sha256', $_POST['password']);
 
         // Modificação: Permite login via Email ou Nome
-        $stmt = $conn->prepare("SELECT * FROM `utilizadores` WHERE (`Email` = ? OR `Nome` = ?) AND `Password` = ?");
-        $stmt->bind_param("sss", $inputLogin, $inputLogin, $password);
+        $stmt = $conn->prepare("SELECT * FROM `utilizadores` WHERE `Nome` = ? AND `Password` = ?");
+        $stmt->bind_param("ss", $inputLogin, $password);
         $stmt->execute();
         $result = $stmt->get_result();
 
