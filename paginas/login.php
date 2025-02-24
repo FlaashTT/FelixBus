@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $inputLogin = $_POST['Nome']; // Com Nome
         $password = hash('sha256', $_POST['password']);
 
-        // Modificação: Permite login via Email ou Nome
+        // Modificação: Permite login via Nome
         $stmt = $conn->prepare("SELECT * FROM `utilizadores` WHERE `Nome` = ? AND `Password` = ?");
         $stmt->bind_param("ss", $inputLogin, $password);
         $stmt->execute();
