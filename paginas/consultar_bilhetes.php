@@ -226,69 +226,72 @@ $result = $conn->query($sql);
         }
 
         // Reembolsar bilhete
-        if (isset($_POST['reembolsarBilhete']) && isset($_POST['valorAReceber'])) {
-            $idCompra = $_POST['reembolsarBilhete'];
-            $valor = $_POST['valorAReceber'];  // Preço unitário do bilhete
+if (isset($_POST['reembolsarBilhete']) && isset($_POST['valorAReceber'])) {
+    $idCompra = $_POST['reembolsarBilhete']; // Aqui, o valor enviado é o id_compra
+    $valor = $_POST['valorAReceber'];  // Preço unitário do bilhete
 
-            // Buscar a compra com seus detalhes
-            $sqlVerificaCompra = "SELECT cb.lugaresComprados, b.preco, r.Origem, r.Destino, b.id_bilhete 
-                                  FROM compras_bilhetes cb
-                                  INNER JOIN bilhetes b ON cb.id_bilhete = b.id_bilhete
-                                  INNER JOIN rota r ON b.id_rota = r.id_rota
-                                  WHERE cb.id = ?";
-            $stmtVerifica = $conn->prepare($sqlVerificaCompra);
-            $stmtVerifica->bind_param("i", $idCompra);
-            $stmtVerifica->execute();
-            $resultVerifica = $stmtVerifica->get_result();
+    // Buscar os dados da compra e do bilhete correspondente usando JOIN
+    $sqlVerificaCompra = "SELECT cb.num_passageiros AS compra_lugares, b.preco, r.Origem, r.Destino, b.id_bilhete 
+                      FROM compras_bilhetes cb
+                      INNER JOIN bilhetes b ON cb.id_bilhete = b.id_bilhete
+                      INNER JOIN rota r ON b.id_rota = r.id_rota
+                      WHERE cb.id_compra = ?";
 
-            if ($resultVerifica->num_rows > 0) {
-                $compra = $resultVerifica->fetch_assoc();
-                $lugaresCompra = $compra['lugaresComprados'];
-                $precoUnitario = $compra['preco'];
-                $origem = $compra['Origem'];
-                $destino = $compra['Destino'];
-                $idBilhete = $compra['id_bilhete'];
+    $stmtVerifica = $conn->prepare($sqlVerificaCompra);
+    $stmtVerifica->bind_param("i", $idCompra);
+    $stmtVerifica->execute();
+    $resultVerifica = $stmtVerifica->get_result();
 
-                // Calcular total a reembolsar
-                $totalReembolso = $lugaresCompra * $precoUnitario;
+    if ($resultVerifica->num_rows > 0) {
+        $compra = $resultVerifica->fetch_assoc();
+        $lugaresCompra = $compra['compra_lugares']; // Quantidade comprada nesta transação
+        $precoUnitario = $compra['preco']; // Preço unitário do bilhete
+        $origem = $compra['Origem'];
+        $destino = $compra['Destino'];
+        $idBilhete = $compra['id_bilhete'];
 
-                // Creditar o saldo do utilizador
-                $sqlSaldo = "UPDATE utilizadores SET Saldo = Saldo + ? WHERE id = ?";
-                $stmtSaldo = $conn->prepare($sqlSaldo);
-                $stmtSaldo->bind_param("di", $totalReembolso, $userId);
+        // Calcular total a reembolsar
+        $totalReembolso = $lugaresCompra * $precoUnitario;
 
-                if ($stmtSaldo->execute()) {
-                    // Atualizar os lugares disponíveis no bilhete
-                    $sqlUpdateBilhete = "UPDATE bilhetes SET lugaresComprados = lugaresComprados - ? WHERE id_bilhete = ? AND lugaresComprados >= ?";
-                    $stmtUpdateBilhete = $conn->prepare($sqlUpdateBilhete);
-                    $stmtUpdateBilhete->bind_param("iii", $lugaresCompra, $idBilhete, $lugaresCompra);
+        // Creditar o saldo do utilizador
+        $sqlSaldo = "UPDATE utilizadores SET Saldo = Saldo + ? WHERE id = ?";
+        $stmtSaldo = $conn->prepare($sqlSaldo);
+        $stmtSaldo->bind_param("di", $totalReembolso, $userId);
 
-                    if ($stmtUpdateBilhete->execute()) {
-                        // Eliminar a compra da tabela de compras
-                        $sqlDeleteCompra = "DELETE FROM compras_bilhetes WHERE id = ?";
-                        $stmtDeleteCompra = $conn->prepare($sqlDeleteCompra);
-                        $stmtDeleteCompra->bind_param("i", $idCompra);
+        if ($stmtSaldo->execute()) {
+            // Atualizar os lugares disponíveis no bilhete
+            $sqlUpdateBilhete = "UPDATE bilhetes SET lugaresComprados = lugaresComprados - ? 
+                                 WHERE id_bilhete = ? AND lugaresComprados >= ?";
+            $stmtUpdateBilhete = $conn->prepare($sqlUpdateBilhete);
+            $stmtUpdateBilhete->bind_param("iii", $lugaresCompra, $idBilhete, $lugaresCompra);
 
-                        if ($stmtDeleteCompra->execute()) {
-                            echo "<p class='success-msg'>Fez Reembolso de Origem: $origem, Destino: $destino.</p>";
-                            criar_alerta("Reembolsou $lugaresCompra bilhete(s) de $origem para $destino.", "Reembolso", $userId);
-                            header("Refresh: 2; url=consultar_bilhetes.php");
-                        } else {
-                            echo "<p class='error-msg'>Erro ao remover a compra do bilhete.</p>";
-                        }
-                    } else {
-                        echo "<p class='error-msg'>Erro ao atualizar os lugares do bilhete.</p>";
-                    }
+            if ($stmtUpdateBilhete->execute()) {
+                // Eliminar a compra na tabela compras_bilhetes utilizando o id_compra
+                $sqlDeleteCompra = "DELETE FROM compras_bilhetes WHERE id_compra = ?";
+                $stmtDeleteCompra = $conn->prepare($sqlDeleteCompra);
+                $stmtDeleteCompra->bind_param("i", $idCompra);
+
+                if ($stmtDeleteCompra->execute()) {
+                    echo "<p class='success-msg'>Fez Reembolso de Origem: $origem, Destino: $destino.</p>";
+                    criar_alerta("Reembolsou $lugaresCompra bilhete(s) de $origem para $destino.", "Reembolso", $userId);
+                    header("Refresh: 2; url=consultar_bilhetes.php");
                 } else {
-                    echo "<p class='error-msg'>Erro ao creditar o saldo do utilizador.</p>";
+                    echo "<p class='error-msg'>Erro ao remover a compra do bilhete.</p>";
                 }
             } else {
-                echo "<p class='error-msg'>Compra não encontrada.</p>";
+                echo "<p class='error-msg'>Erro ao atualizar os lugares do bilhete.</p>";
             }
+        } else {
+            echo "<p class='error-msg'>Erro ao creditar o saldo do utilizador.</p>";
         }
+    } else {
+        echo "<p class='error-msg'>Erro: Não foi encontrada uma compra válida para este bilhete.</p>";
+    }
+}
 
 
-        
+
+
         ?>
     </div>
 
