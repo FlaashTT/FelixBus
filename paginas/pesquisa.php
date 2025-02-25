@@ -12,12 +12,7 @@ if (isset($_SESSION['utilizador'])) {
     $cargoUser = "Visitante";
 }
 
-$acessosPermitidos = ['Cliente', 'Funcionario', 'Admin'];
-if (!in_array($cargoUser, $acessosPermitidos)) {
-    echo "<script>alert('Acesso negado! Tem de iniciar sessão para continuar.'); 
-    window.location.href = 'login.php';</script>";
-    exit();
-}
+
 
 // Função para buscar bilhetes com base nos parâmetros fornecidos
 function pesquisarBilhetes($de = '', $para = '', $dataIda = '')
@@ -174,7 +169,16 @@ $dataIda = isset($_POST['dataIda']) ? $_POST['dataIda'] : '';
     <!-- Sidebar -->
     <div class="sidebar">
         <a href="inicio.php">Início</a>
+
         <?php
+
+        if ($cargoUser === "Visitante") {
+            echo '<a href="rotas.php">Rotas</a>';
+            echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
+            echo' <a href="alertas.php">Alertas</a>';
+            echo '<a href="perfil.php">Perfil</a>';
+        }
+
         if ($cargoUser !== "Visitante") {
             echo '<a href="rotas.php">Rotas</a>';
             echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
