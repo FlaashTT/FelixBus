@@ -22,32 +22,33 @@ if (!in_array($cargoUser, $acessosPermitidos)) {
     exit();
 }
 
+// Obtém o filtro de tipo (se fornecido) e sanitiza
+$origemFiltro = isset($_GET['tipo']) ? mysqli_real_escape_string($conn, $_GET['tipo']) : '';
 
+// Se um filtro foi fornecido, aplica-o na query, mas mantendo a regra: 
+    if (!empty($origemFiltro)) {
+        $sql = "SELECT * FROM alertas 
+                WHERE Tipo_Alerta LIKE '%$origemFiltro%' 
+                AND ((Tipo_Alerta = 'Promoção') OR ((Tipo_Alerta = 'Compra' OR Tipo_Alerta = 'Reembolso') AND Id_Remetente = '$userId'))";
+    } else {
+        $sql = "SELECT * FROM alertas 
+                WHERE (Tipo_Alerta = 'Promoção') OR ((Tipo_Alerta = 'Compra' OR Tipo_Alerta = 'Reembolso') AND Id_Remetente = '$userId')";
+    }
+    
 
-
-$origemFiltro = $_GET['tipo'] ;
-
-// Se o filtro for fornecido, buscar apenas o alerta daquele tipo
-if (!empty($origemFiltro)) {
-    $tipoFiltro = mysqli_real_escape_string($conn, $origemFiltro);
-    $sql = "SELECT * FROM alertas WHERE Tipo_Alerta LIKE '%$tipoFiltro%'";
-} else {
-    $sql = "SELECT * FROM alertas WHERE Tipo_Alerta IN ('Promoção', 'Compra', 'Reembolso')";
-}
-
-
-
+// Paginação
 $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
 $limite = 10;
 $offset = ($pagina - 1) * $limite;
 
-// Contagem total de alertas
-$sqlCountAlertas = "SELECT COUNT(*) as total FROM alertas";
-$resultCountAlertas = $conn->query($sqlCountAlertas);
-$totalRegistosAlertas = $resultCountAlertas->fetch_assoc()['total'];
+// Conta o total de registros que satisfazem a condição
+// Para contar corretamente, encapsulamos a query em uma subconsulta:
+$sqlCount = "SELECT COUNT(*) as total FROM ($sql) AS subquery";
+$resultCount = $conn->query($sqlCount);
+$totalRegistosAlertas = $resultCount->fetch_assoc()['total'];
 $totalPaginasAlertas = ceil($totalRegistosAlertas / $limite);
 
-// Aplicar limite e offset para a paginação
+// Adiciona ordenação e limites para a paginação
 $sql .= " ORDER BY Data_Emissao DESC LIMIT $limite OFFSET $offset";
 $result = mysqli_query($conn, $sql);
 ?>
