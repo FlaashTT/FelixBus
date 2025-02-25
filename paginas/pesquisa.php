@@ -12,6 +12,13 @@ if (isset($_SESSION['utilizador'])) {
     $cargoUser = "Visitante";
 }
 
+$acessosPermitidos = ['Cliente', 'Funcionario', 'Admin'];
+if (!in_array($cargoUser, $acessosPermitidos)) {
+    echo "<script>alert('Acesso negado! Tem de iniciar sessão para continuar.'); 
+    window.location.href = 'login.php';</script>";
+    exit();
+}
+
 // Função para buscar bilhetes com base nos parâmetros fornecidos
 function pesquisarBilhetes($de = '', $para = '', $dataIda = '')
 {
