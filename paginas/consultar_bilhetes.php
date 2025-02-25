@@ -60,7 +60,7 @@ if (!empty($dataFiltro)) {
 $resultTotal = $conn->query($sqlTotal);
 $totalRegistos = $resultTotal->fetch_assoc()['total'];
 $totalPaginas = ceil($totalRegistos / $registosPorPagina);
-//funçao para arredondar valores
+// Funçao para arredondar valores das Páginas
 
 // Consulta para buscar bilhetes com filtros e paginação
 $sql = "SELECT b.*, r.*, cb.*
@@ -169,7 +169,7 @@ $result = $conn->query($sql);
                 echo "<p><strong>Lugares Comprados:</strong> " . $row['num_passageiros'] . "</p>";
                 echo "<p><strong>Total Pago:</strong> " . number_format($row['num_passageiros'] * $row['preco'], 2, ',', '.') . "€</p>";
 
-                
+
 
                 if ($row['estado_bilhete'] === "Expirado" || $row['estado_bilhete'] === "Cancelado") {
                     echo "<form method='POST'>
@@ -192,13 +192,13 @@ $result = $conn->query($sql);
         if (isset($_POST['eliminarBilhete'])) {
             // O valor recebido é o id da compra na tabela compras_bilhetes
             $idCompra = $_POST['eliminarBilhete'];
-        
-            // Deleta somente o registro da tabela compras_bilhetes (alias cb)
+
+            // Elimina somente o registro da tabela compras_bilhetes
             $sql = "DELETE FROM compras_bilhetes WHERE id_compra = ?";
-        
+
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("i", $idCompra);
-        
+
             if ($stmt->execute()) {
                 echo "Bilhete removido do perfil com sucesso!";
                 header("Refresh: 2; url=perfil.php");
@@ -206,73 +206,73 @@ $result = $conn->query($sql);
                 echo "Erro ao remover bilhete.";
             }
         }
-        
+
 
 
         // Reembolsar bilhete
-        // Reembolsar bilhete
-if (isset($_POST['reembolsarBilhete']) && isset($_POST['valorAReceber'])) {
-    $idCompra = $_POST['reembolsarBilhete']; // Aqui, o valor enviado é o id_compra
-    $valor = $_POST['valorAReceber'];  // Preço unitário do bilhete
 
-    // Buscar os dados da compra e do bilhete correspondente usando JOIN
-    $sqlVerificaCompra = "SELECT cb.num_passageiros AS compra_lugares, b.preco, r.Origem, r.Destino, b.id_bilhete 
+        if (isset($_POST['reembolsarBilhete']) && isset($_POST['valorAReceber'])) {
+            $idCompra = $_POST['reembolsarBilhete']; // Aqui, o valor enviado é o id_compra
+            $valor = $_POST['valorAReceber'];  // Preço unitário do bilhete
+
+            // Buscar os dados da compra e do bilhete para reembolsar
+            $sqlVerificaCompra = "SELECT cb.num_passageiros AS compra_lugares, b.preco, r.Origem, r.Destino, b.id_bilhete 
                       FROM compras_bilhetes cb
                       INNER JOIN bilhetes b ON cb.id_bilhete = b.id_bilhete
                       INNER JOIN rota r ON b.id_rota = r.id_rota
                       WHERE cb.id_compra = ?";
 
-    $stmtVerifica = $conn->prepare($sqlVerificaCompra);
-    $stmtVerifica->bind_param("i", $idCompra);
-    $stmtVerifica->execute();
-    $resultVerifica = $stmtVerifica->get_result();
+            $stmtVerifica = $conn->prepare($sqlVerificaCompra);
+            $stmtVerifica->bind_param("i", $idCompra);
+            $stmtVerifica->execute();
+            $resultVerifica = $stmtVerifica->get_result();
 
-    if ($resultVerifica->num_rows > 0) {
-        $compra = $resultVerifica->fetch_assoc();
-        $lugaresCompra = $compra['compra_lugares']; // Quantidade comprada nesta transação
-        $precoUnitario = $compra['preco']; // Preço unitário do bilhete
-        $origem = $compra['Origem'];
-        $destino = $compra['Destino'];
-        $idBilhete = $compra['id_bilhete'];
+            if ($resultVerifica->num_rows > 0) {
+                $compra = $resultVerifica->fetch_assoc();
+                $lugaresCompra = $compra['compra_lugares']; // Quantidade comprada nesta transação
+                $precoUnitario = $compra['preco']; // Preço unitário do bilhete
+                $origem = $compra['Origem'];
+                $destino = $compra['Destino'];
+                $idBilhete = $compra['id_bilhete'];
 
-        // Calcular total a reembolsar
-        $totalReembolso = $lugaresCompra * $precoUnitario;
+                // Calcular total a reembolsar
+                $totalReembolso = $lugaresCompra * $precoUnitario;
 
-        // Creditar o saldo do utilizador
-        $sqlSaldo = "UPDATE utilizadores SET Saldo = Saldo + ? WHERE id = ?";
-        $stmtSaldo = $conn->prepare($sqlSaldo);
-        $stmtSaldo->bind_param("di", $totalReembolso, $userId);
+                // Creditar o saldo do utilizador
+                $sqlSaldo = "UPDATE utilizadores SET Saldo = Saldo + ? WHERE id = ?";
+                $stmtSaldo = $conn->prepare($sqlSaldo);
+                $stmtSaldo->bind_param("di", $totalReembolso, $userId);
 
-        if ($stmtSaldo->execute()) {
-            // Atualizar os lugares disponíveis no bilhete
-            $sqlUpdateBilhete = "UPDATE bilhetes SET lugaresComprados = lugaresComprados - ? 
+                if ($stmtSaldo->execute()) {
+                    // Atualizar os lugares disponíveis no bilhete
+                    $sqlUpdateBilhete = "UPDATE bilhetes SET lugaresComprados = lugaresComprados - ? 
                                  WHERE id_bilhete = ? AND lugaresComprados >= ?";
-            $stmtUpdateBilhete = $conn->prepare($sqlUpdateBilhete);
-            $stmtUpdateBilhete->bind_param("iii", $lugaresCompra, $idBilhete, $lugaresCompra);
+                    $stmtUpdateBilhete = $conn->prepare($sqlUpdateBilhete);
+                    $stmtUpdateBilhete->bind_param("iii", $lugaresCompra, $idBilhete, $lugaresCompra);
 
-            if ($stmtUpdateBilhete->execute()) {
-                // Eliminar a compra na tabela compras_bilhetes utilizando o id_compra
-                $sqlDeleteCompra = "DELETE FROM compras_bilhetes WHERE id_compra = ?";
-                $stmtDeleteCompra = $conn->prepare($sqlDeleteCompra);
-                $stmtDeleteCompra->bind_param("i", $idCompra);
+                    if ($stmtUpdateBilhete->execute()) {
+                        // Eliminar a compra na tabela compras_bilhetes utilizando o id_compra
+                        $sqlDeleteCompra = "DELETE FROM compras_bilhetes WHERE id_compra = ?";
+                        $stmtDeleteCompra = $conn->prepare($sqlDeleteCompra);
+                        $stmtDeleteCompra->bind_param("i", $idCompra);
 
-                if ($stmtDeleteCompra->execute()) {
-                    echo "<p class='success-msg'>Fez Reembolso de Origem: $origem, Destino: $destino.</p>";
-                    criar_alerta("Reembolsou $lugaresCompra bilhete(s) de $origem para $destino.", "Reembolso", $userId);
-                    header("Refresh: 2; url=consultar_bilhetes.php");
+                        if ($stmtDeleteCompra->execute()) {
+                            echo "<p class='success-msg'>Fez Reembolso de Origem: $origem, Destino: $destino.</p>";
+                            criar_alerta("Reembolsou $lugaresCompra bilhete(s) de $origem para $destino.", "Reembolso", $userId);
+                            header("Refresh: 2; url=consultar_bilhetes.php");
+                        } else {
+                            echo "<p class='error-msg'>Erro ao remover a compra do bilhete.</p>";
+                        }
+                    } else {
+                        echo "<p class='error-msg'>Erro ao atualizar os lugares do bilhete.</p>";
+                    }
                 } else {
-                    echo "<p class='error-msg'>Erro ao remover a compra do bilhete.</p>";
+                    echo "<p class='error-msg'>Erro ao creditar o saldo do utilizador.</p>";
                 }
             } else {
-                echo "<p class='error-msg'>Erro ao atualizar os lugares do bilhete.</p>";
+                echo "<p class='error-msg'>Erro: Não foi encontrada uma compra válida para este bilhete.</p>";
             }
-        } else {
-            echo "<p class='error-msg'>Erro ao creditar o saldo do utilizador.</p>";
         }
-    } else {
-        echo "<p class='error-msg'>Erro: Não foi encontrada uma compra válida para este bilhete.</p>";
-    }
-}
 
 
 
@@ -306,4 +306,3 @@ if (isset($_POST['reembolsarBilhete']) && isset($_POST['valorAReceber'])) {
 </body>
 
 </html>
-

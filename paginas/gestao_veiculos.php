@@ -160,7 +160,7 @@ function criar_alerta($mensagem, $tipo)
                     <input class='texto-Adicionar' type='text' name='novoNomeVeiculo' value='" . $veiculo['Nome_Veiculo'] . "'>
                     <input class='texto-Adicionar' type='number' name='novaCapacidade' value='" . $veiculo['Capacidade'] . "'>
                     <input class='texto-Adicionar' type='text' name='novaMatricula' value='" . $veiculo['Matricula'] . "'>
-                    <button class='aceitar-btn' type='submit' name='ConfirmarEditarVeiculo'>Salvar</button>
+                    <button class='aceitar-btn' type='submit' name='ConfirmarEditarVeiculo'>Guardar</button>
                     <button class='recusar-btn' type='button' onclick='window.location.href=\"../paginas/gestao_veiculos.php\"'>Cancelar</button>
                 </div>
             </form>";

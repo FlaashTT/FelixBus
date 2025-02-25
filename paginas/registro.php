@@ -30,7 +30,7 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST["email"]) && !empty($_POST["password"]) && !empty($_POST["username"])) {
         
-        // Sanitização dos inputs para prevenir XSS
+        // Sanitização dos inputs para prevenir XSS (Scripts) e SQL Injection
         $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL); 
         $username = htmlspecialchars(strip_tags($_POST['username']), ENT_QUOTES, 'UTF-8'); 
         $password = $_POST['password'];

@@ -311,7 +311,7 @@ $result = mysqli_query($conn, $sql);
                     <form action='' method='POST'>
                         <input type='hidden' name='idBilhete' value='{$bilhete['id_bilhete']}'>
                         <label for='numLugares'><strong>Quantidade de Lugares:</strong></label>
-                        <input type='number' name='numLugares' id='numLugares' min='1' max='$lugaresDisponiveis' value='1' required>
+                        <input class='texto-Adicionar' type='number' name='numLugares' id='numLugares' min='1' max='$lugaresDisponiveis' value='1' required>
                         
                         <div class='botoes-acoes'>
                             <button class='confirmar-btn' type='submit' name='comprarbilhete'>Confirmar Compra</button>

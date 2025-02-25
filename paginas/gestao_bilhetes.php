@@ -41,6 +41,7 @@ function verificar_promocao($idRota)
     if ($result && mysqli_num_rows($result) > 0) {
         $alerta = mysqli_fetch_assoc($result);
         $desconto = $alerta['Texto_Alerta'];
+        // Usa uma expressão regular para encontrar um número seguido de % na string $desconto
         preg_match('/(\d+)%/', $desconto, $matches);
         if (isset($matches[1])) {
             return $matches[1] / 100;  // Retorna o desconto como uma fração
@@ -211,7 +212,7 @@ if (isset($_POST['eliminarBilhete'])) {
                         <p><b>Preço:</b> " . $bilhete['preco'] . " €</p>
                         <p><b>Estado:</b> " . $bilhete['estado_bilhete'] . "</p>";
 
-            // Apenas bilhetes ativos podem ser editados ou eliminados**
+            // Apenas bilhetes ativos podem ser editados ou eliminados
             if ($bilhete['estado_bilhete'] === "Ativo") {
                 echo "<form method='POST'>
                         <button class='editar-btn' type='submit' name='editarBilhete' value='" . $bilhete['id_bilhete'] . "'>Editar</button>

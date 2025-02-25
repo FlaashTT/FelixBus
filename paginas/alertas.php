@@ -25,7 +25,7 @@ if (!in_array($cargoUser, $acessosPermitidos)) {
 // Obtém o filtro de tipo (se fornecido) e sanitiza
 $origemFiltro = isset($_GET['tipo']) ? mysqli_real_escape_string($conn, $_GET['tipo']) : '';
 
-// Se um filtro foi fornecido, aplica-o na query, mas mantendo a regra: 
+// Se um filtro foi fornecido, aplica-o na query: 
     if (!empty($origemFiltro)) {
         $sql = "SELECT * FROM alertas 
                 WHERE Tipo_Alerta LIKE '%$origemFiltro%' 
