@@ -62,8 +62,8 @@ $totalRegistos = $resultTotal->fetch_assoc()['total'];
 $totalPaginas = ceil($totalRegistos / $registosPorPagina);
 //funçao para arredondar valores
 
-// Consulta para buscar as compras individualmente, utilizando um alias para os lugares comprados na compra
-$sql = "SELECT b.*, r.*, cb.*, cb.id as id_compra, cb.lugaresComprados as compra_lugares
+// Consulta para buscar bilhetes com filtros e paginação
+$sql = "SELECT b.*, r.*, cb.*
         FROM compras_bilhetes cb
         INNER JOIN bilhetes b ON cb.id_bilhete = b.id_bilhete
         INNER JOIN rota r ON b.id_rota = r.id_rota
@@ -96,16 +96,16 @@ $result = $conn->query($sql);
 
 <style>
     .success-msg {
-            color: green;
-            font-size: 16px;
-            margin-top: 20px;
-        }
+        color: green;
+        font-size: 16px;
+        margin-top: 20px;
+    }
 
-        .error-msg {
-            color: red;
-            font-size: 16px;
-            margin-top: 20px;
-        }
+    .error-msg {
+        color: red;
+        font-size: 16px;
+        margin-top: 20px;
+    }
 </style>
 
 <body>
@@ -166,17 +166,19 @@ $result = $conn->query($sql);
                 echo "<p><strong>Origem:</strong> " . $row['Origem'] . "</p>";
                 echo "<p><strong>Destino:</strong> " . $row['Destino'] . "</p>";
                 echo "<p><strong>Preço Unitário:</strong> " . number_format($row['preco'], 2, ',', '.') . "€</p>";
-                echo "<p><strong>Lugares Comprados:</strong> " . $row['lugaresComprados'] . "</p>";
-                echo "<p><strong>Total Pago:</strong> " . number_format($row['lugaresComprados'] * $row['preco'], 2, ',', '.') . "€</p>";
+                echo "<p><strong>Lugares Comprados:</strong> " . $row['num_passageiros'] . "</p>";
+                echo "<p><strong>Total Pago:</strong> " . number_format($row['num_passageiros'] * $row['preco'], 2, ',', '.') . "€</p>";
+
+                
 
                 if ($row['estado_bilhete'] === "Expirado" || $row['estado_bilhete'] === "Cancelado") {
                     echo "<form method='POST'>
-                        <button class='eliminar-btn' type='submit' name='eliminarBilhete' value='" . $row['id_bilhete'] . "'>Eliminar Bilhete</button>
+                        <button class='eliminar-btn' type='submit' name='eliminarBilhete' value='" . $row['id_compra'] . "'>Eliminar Bilhete</button>
                     </form>";
                 } else {
                     echo "<form method='POST'>
                         <input type='hidden' name='valorAReceber' value='" . $row['preco'] . "'>
-                        <button class='aceitar-btn' type='submit' name='reembolsarBilhete' value='" . $row['id_bilhete'] . "'>Reembolsar Bilhete</button>
+                        <button class='aceitar-btn' type='submit' name='reembolsarBilhete' value='" . $row['id_compra'] . "'>Reembolsar Bilhete</button>
                     </form>";
                 }
 
@@ -187,44 +189,27 @@ $result = $conn->query($sql);
             echo "<p>Não existem bilhetes comprados no momento.</p>";
         }
 
-        // Eliminar bilhete
         if (isset($_POST['eliminarBilhete'])) {
+            // O valor recebido é o id da compra na tabela compras_bilhetes
             $idCompra = $_POST['eliminarBilhete'];
-            // Buscar os dados da compra (id_bilhete e quantidade adquirida)
-            $sqlBuscaCompra = "SELECT id_bilhete, lugaresComprados FROM compras_bilhetes WHERE id = ?";
-            $stmtBusca = $conn->prepare($sqlBuscaCompra);
-            $stmtBusca->bind_param("i", $idCompra);
-            $stmtBusca->execute();
-            $resultBusca = $stmtBusca->get_result();
-
-            if ($resultBusca->num_rows > 0) {
-                $compra = $resultBusca->fetch_assoc();
-                $idBilhete = $compra['id_bilhete'];
-                $lugaresCompra = $compra['lugaresComprados'];
-
-                // Atualizar os lugares disponíveis no bilhete
-                $sqlUpdateBilhete = "UPDATE bilhetes SET lugaresComprados = lugaresComprados - ? WHERE id_bilhete = ? AND lugaresComprados >= ?";
-                $stmtUpdate = $conn->prepare($sqlUpdateBilhete);
-                $stmtUpdate->bind_param("iii", $lugaresCompra, $idBilhete, $lugaresCompra);
-                if ($stmtUpdate->execute()) {
-                    // Eliminar a compra na tabela compras_bilhetes
-                    $sqlDeleteCompra = "DELETE FROM compras_bilhetes WHERE id = ?";
-                    $stmtDelete = $conn->prepare($sqlDeleteCompra);
-                    $stmtDelete->bind_param("i", $idCompra);
-                    if ($stmtDelete->execute()) {
-                        echo "<p class='success-msg'>Bilhete removido do perfil com sucesso!</p>";
-                        header("Refresh: 2; url=perfil.php");
-                    } else {
-                        echo "<p class='error-msg'>Erro ao remover a compra do bilhete.</p>";
-                    }
-                } else {
-                    echo "<p class='error-msg'>Erro ao atualizar os lugares do bilhete.</p>";
-                }
+        
+            // Deleta somente o registro da tabela compras_bilhetes (alias cb)
+            $sql = "DELETE FROM compras_bilhetes WHERE id_compra = ?";
+        
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $idCompra);
+        
+            if ($stmt->execute()) {
+                echo "Bilhete removido do perfil com sucesso!";
+                header("Refresh: 2; url=perfil.php");
             } else {
-                echo "<p class='error-msg'>Compra não encontrada.</p>";
+                echo "Erro ao remover bilhete.";
             }
         }
+        
 
+
+        // Reembolsar bilhete
         // Reembolsar bilhete
 if (isset($_POST['reembolsarBilhete']) && isset($_POST['valorAReceber'])) {
     $idCompra = $_POST['reembolsarBilhete']; // Aqui, o valor enviado é o id_compra
@@ -291,7 +276,6 @@ if (isset($_POST['reembolsarBilhete']) && isset($_POST['valorAReceber'])) {
 
 
 
-
         ?>
     </div>
 
@@ -322,3 +306,4 @@ if (isset($_POST['reembolsarBilhete']) && isset($_POST['valorAReceber'])) {
 </body>
 
 </html>
+
