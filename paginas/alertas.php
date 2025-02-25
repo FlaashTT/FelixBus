@@ -22,16 +22,19 @@ if (!in_array($cargoUser, $acessosPermitidos)) {
     exit();
 }
 
-// Inicializa variáveis de filtro para evitar warnings
-$origemFiltro = $_GET['tipo'] ?? '';
 
-// Consulta para buscar alertas com filtro
-$sql = "SELECT * FROM alertas WHERE Tipo_Alerta IN ('Promoção', 'Compra', 'Reembolso')";
 
-// Aplicar filtros
-if (!empty($tipoFiltro)) {
-    $sql .= " WHERE Tipo_Alerta = '" . mysqli_real_escape_string($conn, $tipoFiltro) . "'";
+
+$origemFiltro = $_GET['tipo'] ;
+
+// Se o filtro for fornecido, buscar apenas o alerta daquele tipo
+if (!empty($origemFiltro)) {
+    $tipoFiltro = mysqli_real_escape_string($conn, $origemFiltro);
+    $sql = "SELECT * FROM alertas WHERE Tipo_Alerta LIKE '%$tipoFiltro%'";
+} else {
+    $sql = "SELECT * FROM alertas WHERE Tipo_Alerta IN ('Promoção', 'Compra', 'Reembolso')";
 }
+
 
 
 $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
