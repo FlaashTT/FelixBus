@@ -348,11 +348,12 @@ $result = mysqli_query($conn, $sql);
             comprarBilhete($idBilhete, $userId, $numLugares);
 
             if (!empty($msgCompra)) {
-                $mensagemCompra = "<p class='success-msg'>$msgCompra - Origem: $origem, Destino: $destino.</p>";
-                echo $mensagemCompra;
+                $mensagemCompra = "$msgCompra - Origem: $origem, Destino: $destino.";
+                echo "<script>alert(\"$mensagemCompra\");</script>";
                 criar_alerta("Comprou $numLugares bilhete(s) de $origem para $destino.", "Compra", $userId);
                 header("Refresh: 2; url=rotas.php");
-            } else {
+            }
+             else {
                 $mensagemCompra = "<p class='error-msg'>Erro ao processar a compra.</p>";
             }
         }
