@@ -749,3 +749,30 @@ input.filtro {
     padding: 5px;
     margin-right: 5px;
 }
+
+
+.card-p {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 280px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card-p:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  .card-p h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2em;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+  .card-p p {
+    color: blue;
+    font-size: 1em;
+    margin: 5px 0;
+  }

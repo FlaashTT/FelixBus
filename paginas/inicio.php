@@ -35,21 +35,21 @@ if (isset($_SESSION['utilizador'])) {
     <!-- Sidebar -->
     <div class="sidebar">
         <a href="inicio.php">Início</a>
-        
+
         <?php
 
         // Apenas vistitantes veem
-        if($cargoUser === "Visitante"){
+        if ($cargoUser === "Visitante") {
             echo '<a href="rotas.php">Rotas</a>';
             echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
-            echo' <a href="alertas.php">Alertas</a>';
+            echo ' <a href="alertas.php">Alertas</a>';
         }
 
         // Apenas utilizadores autenticados veem "Perfil"
         if ($cargoUser !== "Visitante") {
             echo '<a href="rotas.php">Rotas</a>';
             echo '<a href="consultar_bilhetes.php">Bilhetes</a>';
-            echo' <a href="alertas.php">Alertas</a>';
+            echo ' <a href="alertas.php">Alertas</a>';
             echo '<a href="perfil.php">Perfil</a>';
         }
 
@@ -106,24 +106,24 @@ if (isset($_SESSION['utilizador'])) {
         </div>
 
         <div class="cards-container">
-            <div class="card-Inicio">
-                <h3>Saúde e Segurança</h3>
-                <p>Mantém-te a ti e aos outros em segurança enquanto viajas connosco.</p>
+            <div class="card-p">
+                <h3>Contacto</h3>
+                <p>988823763</p>
             </div>
-
-            <div class="card-Inicio">
-                <h3>Conforto a bordo</h3>
-                <p>Os nossos autocarros estão equipados com assentos grandes e confortáveis, WC, Wi-Fi e tomadas.</p>
+            <div class="card-p">
+                <h3>Email</h3>
+                <p>FelixBus@gmail.com</p>
             </div>
-
-            <div class="card-Inicio">
-                <h3>Grande rede de autocarros</h3>
-                <p>Escolhe a partir de 3 000 destinos de viagem em 35 países e descobre a Europa com a FelixBus.</p>
+            <div class="card-p">
+                <h3>Horário de Serviço</h3>
+                <p>Todos os dias: 08h30 às 19h00</p>
+                <p>Sábados: 08h30 às 18h00</p>
+                <p style="color: red">Domingo: Encerrado</p>
             </div>
-
-            <div class="card-Inicio">
-                <h3>Viaja de forma ecológica</h3>
-                <p>Os nossos autocarros provaram ter uma excelente pegada de carbono por passageiro conduzido/quilómetro.</p>
+            <div class="card-p">
+                <h3>Escola Superior de Tecnologia</h3>
+                <p>Av Empressario Campos da talagueira, Postal: 6000-767</p>
+                <p>Castelo Branco, Portugal</p>
             </div>
         </div>
     </div>
